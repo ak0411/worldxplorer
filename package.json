@@ -20,12 +20,14 @@
     "react": "19.0.0-rc-2d16326d-20240930",
     "react-dom": "19.0.0-rc-2d16326d-20240930",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/xml2js": "^0.4.14",
     "eslint": "^8",
     "eslint-config-next": "15.0.0-rc.0",
     "eslint-config-prettier": "^9.1.0",

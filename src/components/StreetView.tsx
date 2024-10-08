@@ -1,40 +1,38 @@
 'use client';
 
-import React, { CSSProperties, useCallback, useState } from 'react';
+import React from 'react';
 import {
   GoogleMap,
   StreetViewPanorama,
   useJsApiLoader,
 } from '@react-google-maps/api';
+import { useMemo } from 'react';
+import { getStreetViewOptions } from '@/config/streetViewConfig';
 
-type Props = {};
+type Props = {
+  position: google.maps.LatLngLiteral;
+};
 
-export default function StreetView({}: Props) {
+const StreetView: React.FC<Props> = React.memo(({ position }) => {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
   });
 
-  const center = { lat: 59.64367445827783, lng: 17.081733194926297 };
-
-  const streetViewOptions: google.maps.StreetViewPanoramaOptions = {
-    position: center,
-    visible: true,
-    enableCloseButton: false,
-    addressControl: false,
-    fullscreenControl: false,
-    showRoadLabels: false,
-  };
+  const streetViewOptions = useMemo(
+    () => getStreetViewOptions(position),
+    [position]
+  );
 
   return isLoaded ? (
     <GoogleMap
       mapContainerStyle={{ height: '100%', width: '100%' }}
-      center={center}
+      center={position}
       zoom={10}
     >
       <StreetViewPanorama options={streetViewOptions} />
     </GoogleMap>
-  ) : (
-    <></>
-  );
-}
+  ) : null;
+});
+
+export default StreetView;
