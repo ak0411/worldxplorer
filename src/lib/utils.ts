@@ -21,7 +21,11 @@ export const getStreetViewableLocation =
     return new Promise((resolve) => {
       if (randomPosition) {
         streetViewService.getPanorama(
-          { location: randomPosition, radius: 500 },
+          {
+            location: randomPosition,
+            radius: 1000,
+            preference: google.maps.StreetViewPreference.BEST,
+          },
           (data, status) => {
             if (
               status === google.maps.StreetViewStatus.OK &&
