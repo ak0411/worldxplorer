@@ -1,6 +1,7 @@
 import { Loader } from '@googlemaps/js-api-loader';
 import getCountry from './getCountry';
 import { getRandomPointInCountry } from '@/app/api/randomcountry/route';
+import { Location } from '@/lib/types';
 
 const loader = new Loader({
   apiKey: '',
@@ -8,9 +9,7 @@ const loader = new Loader({
   libraries: ['places'],
 });
 
-function generateLatLng(
-  country?: string
-): Promise<{ lat: number; lng: number; country: string } | null> {
+function generateLatLng(country?: string): Promise<Location | null> {
   return new Promise((resolve, reject) => {
     loader.importLibrary('streetView').then(() => {
       const point = getRandomPointInCountry(
@@ -71,7 +70,9 @@ function generateLatLng(
   });
 }
 
-export default async function getRandomStreetViewable(country?: string) {
+export default async function getRandomStreetViewable(
+  country?: string
+): Promise<Location | null> {
   let found = false;
   let data = null;
 
