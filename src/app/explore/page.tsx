@@ -1,65 +1,96 @@
 'use client';
 
-import StreetViewExplorer from '@/components/StreetViewExplorer';
-import { Button } from '@/components/ui/button';
-import { Location } from '@/lib/types';
-import getRandomStreetViewable from '@/utils/getStreetViewable';
-import { useLoadScript } from '@react-google-maps/api';
-import { Loader2 } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Loader2, ArrowLeft, Camera, Star } from 'lucide-react';
+import getRandomStreetViewable from '@/utils/getStreetViewable';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useRouter } from 'next/navigation';
 import countries from '@/public/countries.json';
-import { Input } from '@/components/ui/input';
 
 export default function ExplorePage() {
-  const [location, setLocation] = useState<Location | null>(null);
-  const [selectedCountry, setSelectedCountry] = useState<string>('');
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
-    libraries: ['places'],
-  });
+  const [selectedCountry, setSelectedCountry] = useState('all');
+  const [embedUrl, setEmbedUrl] = useState('');
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const currentPositionRef = useRef<google.maps.LatLngLiteral | null>(null);
+  const initialLoadRef = useRef(true);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (initialLoadRef.current) {
       getRandomLocation();
+      initialLoadRef.current = false;
     }
-  }, [isLoaded]);
+  }, []);
 
-  const getRandomLocation = async () => {
-    const location = await getRandomStreetViewable(selectedCountry);
-    setLocation(location);
+  const getRandomLocation = async (country?: string) => {
+    setLoading(true);
+    const location = await getRandomStreetViewable(country);
+    if (location) {
+      currentPositionRef.current = {
+        lat: location.lat,
+        lng: location.lng,
+      };
+      const embedUrl = `//www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${location.lat},${location.lng}`;
+      setEmbedUrl(embedUrl);
+    }
+    setLoading(false);
   };
 
-  if (loadError) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center gap-2">
-        <h1>Error Loading Maps</h1>
-        <Button>
-          <Link href="/explore">Retry</Link>
-        </Button>
-      </div>
-    );
-  }
+  const handleCountrySelect = (value: string | null) => {
+    setSelectedCountry(value as string);
+  };
+
+  const handleEnter = () => {
+    getRandomLocation(selectedCountry);
+  };
 
   return (
     <div className="relative flex h-full items-center justify-center">
-      {location && isLoaded ? (
+      {!loading ? (
         <>
-          <StreetViewExplorer
-            position={{ lat: location.lat, lng: location.lng }}
-          />
-          <div className="absolute bottom-10 z-10 mx-auto flex flex-col gap-4 rounded bg-transparent">
-            <Input
-              placeholder="Search for a country"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-            />
-            <Button onClick={getRandomLocation}>New Location</Button>
+          {embedUrl && <iframe className="h-full w-full" src={embedUrl} />}
+          <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 transform">
+            <div className="flex items-center gap-4">
+              <Button variant="outline" onClick={() => router.push('/')}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+              <Select
+                value={selectedCountry}
+                onValueChange={handleCountrySelect}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all" defaultChecked>
+                    Any country
+                  </SelectItem>
+                  {countries.map((country) => (
+                    <SelectItem key={country.code} value={country.code}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleEnter}>Go</Button>
+              <Button variant="outline">
+                <Camera className="size-4" />
+              </Button>
+            </div>
           </div>
         </>
       ) : (
         <Button disabled>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="mr-2 size-4 animate-spin" />
           Loading...
         </Button>
       )}

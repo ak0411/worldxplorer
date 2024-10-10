@@ -1,3 +1,5 @@
+'use client';
+
 type FeatureCardProps = {
   icon: React.ReactNode;
   title: string;
