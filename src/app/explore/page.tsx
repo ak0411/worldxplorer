@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, Camera, Star } from 'lucide-react';
+import { Loader2, ArrowLeft, Star, Camera } from 'lucide-react';
 import getRandomStreetViewable from '@/utils/getStreetViewable';
 import {
   Select,
@@ -11,16 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useRouter } from 'next/navigation';
 import countries from '@/public/countries.json';
+import Link from 'next/link';
 
 export default function ExplorePage() {
   const [selectedCountry, setSelectedCountry] = useState('all');
-  const [embedUrl, setEmbedUrl] = useState('');
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [streetViewUrl, setStreetViewUrl] = useState<string | null>(null);
 
-  const currentPositionRef = useRef<google.maps.LatLngLiteral | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const initialLoadRef = useRef(true);
 
   useEffect(() => {
@@ -34,12 +33,9 @@ export default function ExplorePage() {
     setLoading(true);
     const location = await getRandomStreetViewable(country);
     if (location) {
-      currentPositionRef.current = {
-        lat: location.lat,
-        lng: location.lng,
-      };
-      const embedUrl = `//www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${location.lat},${location.lng}`;
-      setEmbedUrl(embedUrl);
+      setStreetViewUrl(
+        `//www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${location.lat},${location.lng}&fov=100`
+      );
     }
     setLoading(false);
   };
@@ -56,13 +52,17 @@ export default function ExplorePage() {
     <div className="relative flex h-full items-center justify-center">
       {!loading ? (
         <>
-          {embedUrl && <iframe className="h-full w-full" src={embedUrl} />}
+          {streetViewUrl && (
+            <iframe className="h-full w-full" src={streetViewUrl} />
+          )}
           <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 transform">
             <div className="flex items-center gap-4">
-              <Button variant="outline" onClick={() => router.push('/')}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
+              <Link href="/">
+                <Button variant="outline">
+                  <ArrowLeft className="mr-2 size-4" />
+                  Back
+                </Button>
+              </Link>
               <Select
                 value={selectedCountry}
                 onValueChange={handleCountrySelect}
@@ -84,6 +84,9 @@ export default function ExplorePage() {
               <Button onClick={handleEnter}>Go</Button>
               <Button variant="outline">
                 <Camera className="size-4" />
+              </Button>
+              <Button variant="outline" disabled>
+                <Star className="size-4" />
               </Button>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Globe, Map, Compass, Users, Camera, Star } from 'lucide-react';
+import { Globe, Map, Compass, Users, Camera } from 'lucide-react';
 import FeatureCard from '@/components/FeatureCard';
 import TestimonialCard from '@/components/TestimonialCard';
 

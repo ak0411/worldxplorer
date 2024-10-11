@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ country: null }, { status: 400 });
   }
 
-  const output = lookUp(parseFloat(lat), parseFloat(lng)).country_a2;
+  const output: string | null = lookUp(
+    parseFloat(lat),
+    parseFloat(lng)
+  )?.country_a2;
 
   if (output) {
     return NextResponse.json({ country: output }, { status: 200 });
