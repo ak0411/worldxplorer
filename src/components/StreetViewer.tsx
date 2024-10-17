@@ -29,28 +29,40 @@ export default function StreetViewer({ elements }: Props) {
 
   return (
     <div className="relative h-full w-full">
-      {streetView ? ( // Use the new state for the iframe src
+      {elements.length > 0 ? (
         <>
-          <div className="absolute bottom-2 left-2 bg-primary/50 text-xs text-green-500">
+          <div className="absolute bottom-2 left-2 rounded bg-primary/80 p-2 text-xs text-green-500">
             <p>total locations: {elements.length}</p>
             <p>index: {index}</p>
             <p>
-              old: {elements[index].lat}, {elements[index].lon}
+              old: {elements[index]?.lat}, {elements[index]?.lon}
             </p>
-            <p>
-              new: {streetView.lat}, {streetView.lng}
-            </p>
+            {streetView && (
+              <p>
+                new: {streetView.lat}, {streetView.lng}
+              </p>
+            )}
           </div>
-          <iframe
-            width="100%"
-            height="100%"
-            loading="lazy"
-            allowFullScreen
-            src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${streetView.lat},${streetView.lng}&fov=100`}
-          />
+          {streetView ? (
+            <iframe
+              width="100%"
+              height="100%"
+              loading="lazy"
+              allowFullScreen
+              src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${streetView.lat},${streetView.lng}&fov=100`}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center bg-transparent">
+              <p className="text-xl">Unable to view the location...</p>
+            </div>
+          )}
           <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-2">
             <Button
-              onClick={() => setIndex((prev) => (prev - 1) % elements.length)}
+              onClick={() =>
+                setIndex(
+                  (prev) => (prev - 1 + elements.length) % elements.length
+                )
+              }
             >
               Prev
             </Button>
