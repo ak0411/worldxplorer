@@ -8,6 +8,58 @@ const loader = new Loader({
   libraries: ['places'],
 });
 
+export async function getStreetViewable(
+  lat: number,
+  lng: number
+): Promise<google.maps.LatLngLiteral | null> {
+  return new Promise((resolve) => {
+    loader.importLibrary('streetView').then(() => {
+      const panorama = new google.maps.StreetViewService();
+      panorama.getPanorama(
+        {
+          preference: google.maps.StreetViewPreference.NEAREST,
+          location: { lat, lng },
+          radius: 1000,
+          sources: [google.maps.StreetViewSource.GOOGLE],
+        },
+        async (data, status) => {
+          if (status === 'OK' && data) {
+            const latLng = data.location?.latLng;
+            if (!latLng) {
+              console.log(
+                "Failed to get location, couldn't find latLng object"
+              );
+              resolve(null);
+              return;
+            }
+
+            try {
+              if (!data.location?.description) {
+                console.log('No description, returning null');
+                resolve(null);
+              } else {
+                resolve({
+                  lat: parseFloat(latLng.lat().toFixed(7)),
+                  lng: parseFloat(latLng.lng().toFixed(7)),
+                });
+              }
+            } catch (e) {
+              console.log('Failed to get country', e);
+              resolve({
+                lat: parseFloat(latLng.lat().toFixed(7)),
+                lng: parseFloat(latLng.lng().toFixed(7)),
+              });
+            }
+          } else {
+            console.log('Failed to get panorama', status, data);
+            resolve(null);
+          }
+        }
+      );
+    });
+  });
+}
+
 async function generateValidLatLng(
   country?: string
 ): Promise<google.maps.LatLngLiteral | null> {
