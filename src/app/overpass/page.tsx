@@ -11,8 +11,8 @@ type Props = {};
 
 export default function Overpass({}: Props) {
   const [elements, setElements] = useState<Element[]>([]);
-  useState<google.maps.LatLngLiteral | null>(null);
 
+  console.log('Len: ' + elements.length);
   return (
     <div className="h-screen p-2">
       <PanelGroup direction="horizontal" className="flex gap-2">

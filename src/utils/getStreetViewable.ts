@@ -20,7 +20,7 @@ export async function getStreetViewable(
           preference: google.maps.StreetViewPreference.NEAREST,
           location: { lat, lng },
           radius: 1000,
-          sources: [google.maps.StreetViewSource.GOOGLE],
+          sources: [google.maps.StreetViewSource.DEFAULT],
         },
         async (data, status) => {
           if (status === 'OK' && data) {

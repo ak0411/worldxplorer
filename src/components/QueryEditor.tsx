@@ -13,7 +13,7 @@ type Props = {
 export default function QueryEditor({ setElements }: Props) {
   // Update function signature
   const [value, setValue] = useState(
-    'area(3600382313)->.searchArea;\n(\nnode["waterway"="dam"](area.searchArea);\n);'
+    'area["ISO3166-1"="TH"]->.a;\n\nnode["tourism"="viewpoint"](area.a);\n'
   );
   const [loading, setLoading] = useState(false);
 
@@ -51,7 +51,7 @@ export default function QueryEditor({ setElements }: Props) {
   );
 
   const handleQuery = useCallback(async () => {
-    const query = '[out:json][timeout:300];' + value + 'out skel;';
+    const query = '[out:json];' + value + 'out body;>;out skel qt;';
     setLoading(true);
     try {
       const response = await fetch('https://overpass-api.de/api/interpreter', {
@@ -62,7 +62,12 @@ export default function QueryEditor({ setElements }: Props) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setElements(data.elements);
+      console.info(data);
+      // Filter and append only objects with type "node"
+      const nodes = data.elements.filter(
+        (element: any) => element.type === 'node'
+      );
+      setElements(nodes);
     } catch (error) {
       console.error('Error fetching Overpass data:', error);
     } finally {

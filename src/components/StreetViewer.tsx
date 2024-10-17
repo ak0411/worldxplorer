@@ -2,7 +2,7 @@
 
 import { Element } from '@/lib/types';
 import { getStreetViewable } from '@/utils/getStreetViewable';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
 type Props = {
@@ -10,13 +10,17 @@ type Props = {
 };
 
 export default function StreetViewer({ elements }: Props) {
-  const [index, setIndex] = useState<number>(0);
   const [streetView, setStreetView] =
     useState<google.maps.LatLngLiteral | null>(null);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [elements]);
 
   useEffect(() => {
     const fetchStreetViewable = async () => {
-      if (elements.length > 0) {
+      if (elements.length > 0 && index < elements.length) {
         const location = await getStreetViewable(
           elements[index].lat,
           elements[index].lon
@@ -34,9 +38,11 @@ export default function StreetViewer({ elements }: Props) {
           <div className="absolute bottom-2 left-2 rounded bg-primary/80 p-2 text-xs text-green-500">
             <p>total locations: {elements.length}</p>
             <p>index: {index}</p>
-            <p>
-              old: {elements[index]?.lat}, {elements[index]?.lon}
-            </p>
+            {index < elements.length && (
+              <p>
+                old: {elements[index].lat}, {elements[index].lon}
+              </p>
+            )}
             {streetView && (
               <p>
                 new: {streetView.lat}, {streetView.lng}
