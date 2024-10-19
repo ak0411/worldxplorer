@@ -4,6 +4,7 @@ import { Element } from '@/lib/types';
 import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
+import { ChevronLeft, ChevronRight, Dices } from 'lucide-react';
 
 type Props = {
   elements: Element[];
@@ -55,6 +56,7 @@ export default function StreetViewer({ elements }: Props) {
               height="100%"
               loading="lazy"
               allowFullScreen
+              className="rounded"
               src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${streetView.lat},${streetView.lng}&fov=100`}
             />
           ) : (
@@ -70,24 +72,24 @@ export default function StreetViewer({ elements }: Props) {
                 )
               }
             >
-              Prev
-            </Button>
-            <Button
-              onClick={() => setIndex((prev) => (prev + 1) % elements.length)}
-            >
-              Next
+              <ChevronLeft />
             </Button>
             <Button
               onClick={() =>
                 setIndex(Math.floor(Math.random() * elements.length))
               }
             >
-              Random
+              <Dices />
+            </Button>
+            <Button
+              onClick={() => setIndex((prev) => (prev + 1) % elements.length)}
+            >
+              <ChevronRight />
             </Button>
           </div>
         </>
       ) : (
-        <div className="flex h-full items-center justify-center bg-transparent">
+        <div className="flex h-full items-center justify-center rounded bg-secondary">
           <p className="text-xl">Run a query to view Street View</p>
         </div>
       )}

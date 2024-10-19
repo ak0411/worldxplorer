@@ -63,7 +63,6 @@ export default function QueryEditor({ setElements }: Props) {
       }
       const data = await response.json();
       console.info(data);
-      // Filter and append only objects with type "node"
       const nodes = data.elements.filter(
         (element: any) => element.type === 'node'
       );
@@ -76,15 +75,15 @@ export default function QueryEditor({ setElements }: Props) {
   }, [value, setElements]);
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col gap-2">
       <Textarea
-        className="flex-grow bg-secondary p-4 text-lg"
+        className="flex-grow bg-secondary p-2 text-lg"
         placeholder="Enter your Overpass QL query here..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <Button onClick={handleQuery}>
+      <Button onClick={handleQuery} className="w-fit self-center">
         {loading ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />
