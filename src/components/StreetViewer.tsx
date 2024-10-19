@@ -8,16 +8,13 @@ import { ChevronLeft, ChevronRight, Dices } from 'lucide-react';
 
 type Props = {
   elements: Element[];
+  index: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
-export default function StreetViewer({ elements }: Props) {
+export default function StreetViewer({ elements, index, setIndex }: Props) {
   const [streetView, setStreetView] =
     useState<google.maps.LatLngLiteral | null>(null);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    setIndex(0);
-  }, [elements]);
 
   useEffect(() => {
     const fetchStreetViewable = async () => {

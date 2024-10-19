@@ -83,7 +83,7 @@ export default function QueryEditor({ setElements }: Props) {
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <Button onClick={handleQuery} className="w-fit self-center">
+      <Button onClick={handleQuery}>
         {loading ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />

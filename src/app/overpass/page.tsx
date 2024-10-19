@@ -4,8 +4,8 @@ import QueryEditor from '@/components/QueryEditor';
 import { Separator } from '@/components/ui/separator';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { useState } from 'react';
-import StreetViewer from '@/components/StreetViewer';
 import { Element } from '@/lib/types';
+import Viewer from '@/components/Viewer';
 
 type Props = {};
 
@@ -13,7 +13,6 @@ export default function Overpass({}: Props) {
   const [elements, setElements] = useState<Element[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  console.log('Len: ' + elements.length);
   return (
     <div className={`h-screen ${isCollapsed ? 'py-2 pr-2' : 'p-2'}`}>
       <PanelGroup direction="horizontal" className="flex gap-2">
@@ -30,7 +29,7 @@ export default function Overpass({}: Props) {
           <Separator orientation="vertical" className="h-[400px]" />
         </PanelResizeHandle>
         <Panel minSize={30} defaultSize={65}>
-          <StreetViewer elements={elements} />
+          <Viewer elements={elements} />
         </Panel>
       </PanelGroup>
     </div>
