@@ -11,17 +11,18 @@ import 'leaflet/dist/leaflet.css';
 import { Element } from '@/lib/types';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { useEffect } from 'react';
+
 type Props = {
   elements: Element[];
   onMarkerClick: (id: number) => void;
+  index: number;
 };
 
-export default function MapViewer({ elements, onMarkerClick }: Props) {
+export default function MapViewer({ elements, onMarkerClick, index }: Props) {
   return (
     <MapContainer
       center={{ lat: 0, lng: 0 }}
-      zoom={10}
-      className="h-screen w-screen rounded-b"
+      className="h-full w-full rounded-b"
       minZoom={3}
     >
       <TileLayer
@@ -38,7 +39,7 @@ export default function MapViewer({ elements, onMarkerClick }: Props) {
           <CircleMarker
             key={point.id}
             center={{ lat: point.lat, lng: point.lon }}
-            radius={7}
+            radius={5}
             fillColor="#3388ff"
             color="#3388ff"
             weight={1}
@@ -48,35 +49,50 @@ export default function MapViewer({ elements, onMarkerClick }: Props) {
               click: () => onMarkerClick(index),
             }}
           >
-            <Popup>{point.id || 'Location'}</Popup>
+            <Popup>{index}</Popup>
           </CircleMarker>
         ))}
       </MarkerClusterGroup>
-      <RecenterMap elements={elements} />
+      <MapComponent elements={elements} index={index} />
     </MapContainer>
   );
 }
 
-function RecenterMap({ elements }: { elements: Element[] }) {
+function MapComponent({
+  elements,
+  index,
+}: {
+  elements: Element[];
+  index: number;
+}) {
   const map = useMap();
 
-  const averageLat =
-    elements.length > 0
-      ? elements.reduce((sum, point) => sum + point.lat, 0) / elements.length
-      : 0;
-
-  const averageLon =
-    elements.length > 0
-      ? elements.reduce((sum, point) => sum + point.lon, 0) / elements.length
-      : 0;
-
+  // Recenter map
   useEffect(() => {
     const center =
-      elements.length > 0
-        ? { lat: averageLat, lng: averageLon }
+      elements.length > 0 && index < elements.length
+        ? { lat: elements[index].lat, lng: elements[index].lon }
         : { lat: 0, lng: 0 };
-    map.setView(center, 10);
-  }, [elements, map]);
+    map.setView(center, 18);
+  }, [elements, index, map]);
+
+  // Observe size changes
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+
+    const mapContainer = document.querySelector('.leaflet-container');
+    if (mapContainer) {
+      resizeObserver.observe(mapContainer);
+    }
+
+    return () => {
+      if (mapContainer) {
+        resizeObserver.unobserve(mapContainer);
+      }
+    };
+  }, [map]);
 
   return null;
 }

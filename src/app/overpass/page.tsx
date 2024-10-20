@@ -11,16 +11,22 @@ type Props = {};
 
 export default function Overpass({}: Props) {
   const [elements, setElements] = useState<Element[]>([]);
+  const [isQueryEditorCollapsed, setIsQueryEditorCollapsed] = useState(false);
 
   return (
-    <div className="h-screen">
+    <div className={`h-screen ${isQueryEditorCollapsed ? 'py-2 pr-2' : 'p-2'}`}>
       <PanelGroup
         direction="horizontal"
         className="flex gap-2"
         autoSaveId="persistance"
       >
-        <Panel collapsible minSize={10}>
-          <QueryEditor setElements={setElements} className="py-2 pl-2" />
+        <Panel
+          collapsible
+          minSize={10}
+          onCollapse={() => setIsQueryEditorCollapsed(true)}
+          onExpand={() => setIsQueryEditorCollapsed(false)}
+        >
+          <QueryEditor setElements={setElements} />
         </Panel>
         <PanelResizeHandle className="flex items-center">
           <Separator orientation="vertical" className="h-[400px]" />

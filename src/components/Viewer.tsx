@@ -27,12 +27,12 @@ export default function Viewer({ elements }: Props) {
 
   return (
     <PanelGroup direction="vertical">
-      <Panel collapsible minSize={10}>
+      <Panel collapsible minSize={10} defaultSize={60}>
         <StreetViewer elements={elements} index={index} setIndex={setIndex} />
       </Panel>
       <PanelResizeHandle />
-      <Panel collapsible minSize={10} defaultSize={0} ref={ref}>
-        <MapViewer elements={elements} onMarkerClick={setIndex} />
+      <Panel collapsible minSize={10} defaultSize={40}>
+        <MapViewer elements={elements} onMarkerClick={setIndex} index={index} />
       </Panel>
     </PanelGroup>
   );

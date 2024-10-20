@@ -6,6 +6,7 @@ import {
   SetStateAction,
   useCallback,
   useState,
+  useEffect,
 } from 'react';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
@@ -23,9 +24,7 @@ export default function QueryEditor({
   ...props
 }: Props & ComponentProps<'div'>) {
   // Update function signature
-  const [value, setValue] = useState(
-    'area["ISO3166-1"="TH"]->.a;\n\nnode["tourism"="viewpoint"](area.a);\n'
-  );
+  const [value, setValue] = useState(localStorage.getItem('queryValue') || '');
   const [loading, setLoading] = useState(false);
 
   const handleKeyDown = useCallback(
@@ -62,7 +61,8 @@ export default function QueryEditor({
   );
 
   const handleQuery = useCallback(async () => {
-    const query = '[out:json];' + value + 'out body;>;out skel qt;';
+    localStorage.setItem('queryValue', value);
+    const query = '[out:json];' + value;
     setLoading(true);
     try {
       const response = await fetch('https://overpass-api.de/api/interpreter', {
