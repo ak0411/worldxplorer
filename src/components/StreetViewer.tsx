@@ -86,7 +86,7 @@ export default function StreetViewer({ elements, index, setIndex }: Props) {
           </div>
         </>
       ) : (
-        <div className="flex h-full items-center justify-center rounded bg-secondary">
+        <div className="flex h-full items-center justify-center rounded bg-transparent">
           <p className="text-xl">Run a query to view Street View</p>
         </div>
       )}

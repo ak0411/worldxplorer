@@ -1,16 +1,27 @@
 'use client';
 
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import {
+  ComponentProps,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
 import { Element } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 type Props = {
   setElements: Dispatch<SetStateAction<Element[]>>;
 };
 
-export default function QueryEditor({ setElements }: Props) {
+export default function QueryEditor({
+  setElements,
+  className,
+  ...props
+}: Props & ComponentProps<'div'>) {
   // Update function signature
   const [value, setValue] = useState(
     'area["ISO3166-1"="TH"]->.a;\n\nnode["tourism"="viewpoint"](area.a);\n'
@@ -75,7 +86,7 @@ export default function QueryEditor({ setElements }: Props) {
   }, [value, setElements]);
 
   return (
-    <div className="flex h-full flex-col gap-2">
+    <div className={cn('flex h-full flex-col gap-2', className)} {...props}>
       <Textarea
         className="flex-grow bg-secondary p-2 text-lg"
         placeholder="Enter your Overpass QL query here..."
