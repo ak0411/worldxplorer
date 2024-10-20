@@ -20,8 +20,9 @@ export default function MapViewer({ elements, onMarkerClick }: Props) {
   return (
     <MapContainer
       center={{ lat: 0, lng: 0 }}
-      zoom={5}
+      zoom={10}
       className="h-screen w-screen rounded-b"
+      minZoom={3}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -37,7 +38,7 @@ export default function MapViewer({ elements, onMarkerClick }: Props) {
           <CircleMarker
             key={point.id}
             center={{ lat: point.lat, lng: point.lon }}
-            radius={4}
+            radius={7}
             fillColor="#3388ff"
             color="#3388ff"
             weight={1}
@@ -74,7 +75,7 @@ function RecenterMap({ elements }: { elements: Element[] }) {
       elements.length > 0
         ? { lat: averageLat, lng: averageLon }
         : { lat: 0, lng: 0 };
-    map.setView(center);
+    map.setView(center, 10);
   }, [elements, map]);
 
   return null;
