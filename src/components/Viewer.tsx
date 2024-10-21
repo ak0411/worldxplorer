@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import StreetViewer from './StreetViewer';
-import MapViewer from './MapViewer';
 import {
   ImperativePanelHandle,
   Panel,
@@ -8,6 +9,7 @@ import {
   PanelResizeHandle,
 } from 'react-resizable-panels';
 import { Element } from '@/lib/types';
+import MapViewer from './MapViewer';
 
 type Props = {
   elements: Element[];
@@ -15,23 +17,24 @@ type Props = {
 
 export default function Viewer({ elements }: Props) {
   const [index, setIndex] = useState(0);
-  const ref = useRef<ImperativePanelHandle>(null);
+  const streetviewRef = useRef<ImperativePanelHandle>(null);
+  const mapRef = useRef<ImperativePanelHandle>(null);
 
   useEffect(() => {
     setIndex(0);
-    const panel = ref.current;
-    if (panel && elements.length > 0) {
-      panel.resize(40);
+    if (streetviewRef.current && mapRef.current && elements.length > 0) {
+      streetviewRef.current.resize(60);
+      mapRef.current.resize(40);
     }
   }, [elements]);
 
   return (
     <PanelGroup direction="vertical">
-      <Panel collapsible minSize={10} defaultSize={60}>
+      <Panel collapsible minSize={10} defaultSize={100} ref={streetviewRef}>
         <StreetViewer elements={elements} index={index} setIndex={setIndex} />
       </Panel>
       <PanelResizeHandle />
-      <Panel collapsible minSize={10} defaultSize={40}>
+      <Panel collapsible minSize={10} defaultSize={0} ref={mapRef}>
         <MapViewer elements={elements} onMarkerClick={setIndex} index={index} />
       </Panel>
     </PanelGroup>

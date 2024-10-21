@@ -38,7 +38,7 @@ export default function MapViewer({ elements, onMarkerClick, index }: Props) {
         {elements.map((point, index) => (
           <CircleMarker
             key={point.id}
-            center={{ lat: point.lat, lng: point.lon }}
+            center={{ lat: point.lat, lng: point.lng }}
             radius={5}
             fillColor="#3388ff"
             color="#3388ff"
@@ -71,7 +71,7 @@ function MapComponent({
   useEffect(() => {
     const center =
       elements.length > 0 && index < elements.length
-        ? { lat: elements[index].lat, lng: elements[index].lon }
+        ? { lat: elements[index].lat, lng: elements[index].lng }
         : { lat: 0, lng: 0 };
     map.setView(center, 18);
   }, [elements, index, map]);

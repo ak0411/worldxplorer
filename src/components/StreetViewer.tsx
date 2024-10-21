@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight, Dices } from 'lucide-react';
 type Props = {
   elements: Element[];
   index: number;
-  setIndex: React.Dispatch<React.SetStateAction<number>>;
+  setIndex: (value: React.SetStateAction<number>) => void;
 };
 
 export default function StreetViewer({ elements, index, setIndex }: Props) {
@@ -21,7 +21,7 @@ export default function StreetViewer({ elements, index, setIndex }: Props) {
       if (elements.length > 0 && index < elements.length) {
         const location = await getStreetViewable(
           elements[index].lat,
-          elements[index].lon
+          elements[index].lng
         );
         setStreetView(location);
       }
@@ -38,7 +38,7 @@ export default function StreetViewer({ elements, index, setIndex }: Props) {
             <p>index: {index}</p>
             {index < elements.length && (
               <p>
-                old: {elements[index].lat}, {elements[index].lon}
+                old: {elements[index].lat}, {elements[index].lng}
               </p>
             )}
             {streetView && (

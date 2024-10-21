@@ -5,8 +5,8 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
-  useState,
   useEffect,
+  useState,
 } from 'react';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
@@ -23,9 +23,16 @@ export default function QueryEditor({
   className,
   ...props
 }: Props & ComponentProps<'div'>) {
-  // Update function signature
-  const [value, setValue] = useState(localStorage.getItem('queryValue') || '');
+  const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if window is defined to ensure we're in the browser
+    if (typeof window !== 'undefined') {
+      const storedValue = localStorage.getItem('queryValue') || '';
+      setValue(storedValue);
+    }
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
@@ -47,13 +54,21 @@ export default function QueryEditor({
       if (e.key === 'Tab' && e.shiftKey) {
         e.preventDefault();
 
-        // Only remove tab if there's one before the cursor
-        if (value.slice(start - 1, start) === '\t') {
-          const beforeTab = value.slice(0, start - 1);
+        // Check if the character before the cursor is a tab or a space
+        const beforeChar = value.slice(start - 1, start);
+        if (beforeChar === '\t' || beforeChar === ' ') {
+          let newStart = start - 1;
+
+          // Remove leading spaces
+          while (newStart > 0 && value[newStart - 1] === ' ') {
+            newStart--;
+          }
+
+          const beforeTab = value.slice(0, newStart);
           const afterTab = value.slice(end);
 
           setValue(`${beforeTab}${afterTab}`);
-          textarea.selectionStart = textarea.selectionEnd = start - 1;
+          textarea.selectionStart = textarea.selectionEnd = newStart;
         }
       }
     },
@@ -74,9 +89,13 @@ export default function QueryEditor({
       }
       const data = await response.json();
       console.info(data);
-      const nodes = data.elements.filter(
-        (element: any) => element.type === 'node'
-      );
+      const nodes = data.elements
+        .filter((element: any) => element.type === 'node')
+        .map((element: any) => ({
+          id: element.id,
+          lat: element.lat,
+          lng: element.lon,
+        }));
       setElements(nodes);
     } catch (error) {
       console.error('Error fetching Overpass data:', error);
