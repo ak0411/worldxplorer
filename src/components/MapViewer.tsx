@@ -22,6 +22,7 @@ export default function MapViewer({ elements, onMarkerClick, index }: Props) {
   return (
     <MapContainer
       center={{ lat: 0, lng: 0 }}
+      zoom={15}
       className="h-full w-full rounded-b"
       minZoom={3}
     >
@@ -73,7 +74,9 @@ function MapComponent({
       elements.length > 0 && index < elements.length
         ? { lat: elements[index].lat, lng: elements[index].lng }
         : { lat: 0, lng: 0 };
-    map.setView(center, 18);
+
+    const currentZoom = map.getZoom();
+    map.setView(center, currentZoom);
   }, [elements, index, map]);
 
   // Observe size changes
