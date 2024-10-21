@@ -4,15 +4,21 @@ import { Element } from '@/lib/types';
 import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { ChevronLeft, ChevronRight, Dices } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
 
 type Props = {
   elements: Element[];
   index: number;
   setIndex: (value: React.SetStateAction<number>) => void;
+  toggleMap: () => void;
 };
 
-export default function StreetViewer({ elements, index, setIndex }: Props) {
+export default function StreetViewer({
+  elements,
+  index,
+  setIndex,
+  toggleMap,
+}: Props) {
   const [streetView, setStreetView] =
     useState<google.maps.LatLngLiteral | null>(null);
 
@@ -78,6 +84,9 @@ export default function StreetViewer({ elements, index, setIndex }: Props) {
             >
               <Dices />
             </Button>
+            <Button onClick={toggleMap}>
+              <Map />
+            </Button>
             <Button
               onClick={() => setIndex((prev) => (prev + 1) % elements.length)}
             >
@@ -86,7 +95,7 @@ export default function StreetViewer({ elements, index, setIndex }: Props) {
           </div>
         </>
       ) : (
-        <div className="flex h-full items-center justify-center rounded bg-transparent">
+        <div className="flex h-full items-center justify-center rounded bg-secondary">
           <p className="text-xl">Run a query to view Street View</p>
         </div>
       )}

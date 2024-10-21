@@ -27,7 +27,6 @@ export default function QueryEditor({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check if window is defined to ensure we're in the browser
     if (typeof window !== 'undefined') {
       const storedValue = localStorage.getItem('queryValue') || '';
       setValue(storedValue);
@@ -64,21 +63,19 @@ export default function QueryEditor({
   }, [value, setElements]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    const { value } = e.currentTarget; // Get the current value of the textarea
+    const { value } = e.currentTarget;
 
     if (e.key === 'Tab') {
-      e.preventDefault(); // Prevent the default tab behavior
+      e.preventDefault();
 
-      const cursorPosition = e.currentTarget.selectionStart; // Get the current cursor position
-      const tab = '\t'; // Define the tab character
+      const cursorPosition = e.currentTarget.selectionStart;
+      const tab = '\t';
 
-      // Set the new value with the tab character inserted
       e.currentTarget.value =
         value.substring(0, cursorPosition) +
         tab +
         value.substring(e.currentTarget.selectionEnd);
 
-      // Reset the cursor position to be after the inserted tab
       e.currentTarget.selectionStart = cursorPosition + 1;
       e.currentTarget.selectionEnd = cursorPosition + 1;
     }
