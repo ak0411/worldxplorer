@@ -34,47 +34,6 @@ export default function QueryEditor({
     }
   }, []);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
-      const textarea = e.target as HTMLTextAreaElement;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-
-      // Regular Tab insertion
-      if (e.key === 'Tab' && !e.shiftKey) {
-        e.preventDefault();
-        const beforeTab = value.slice(0, start);
-        const afterTab = value.slice(end);
-
-        setValue(`${beforeTab}\t${afterTab}`);
-        textarea.selectionStart = textarea.selectionEnd = start + 1;
-      }
-
-      // Shift + Tab: Remove tab
-      if (e.key === 'Tab' && e.shiftKey) {
-        e.preventDefault();
-
-        // Check if the character before the cursor is a tab or a space
-        const beforeChar = value.slice(start - 1, start);
-        if (beforeChar === '\t' || beforeChar === ' ') {
-          let newStart = start - 1;
-
-          // Remove leading spaces
-          while (newStart > 0 && value[newStart - 1] === ' ') {
-            newStart--;
-          }
-
-          const beforeTab = value.slice(0, newStart);
-          const afterTab = value.slice(end);
-
-          setValue(`${beforeTab}${afterTab}`);
-          textarea.selectionStart = textarea.selectionEnd = newStart;
-        }
-      }
-    },
-    [value]
-  );
-
   const handleQuery = useCallback(async () => {
     localStorage.setItem('queryValue', value);
     const query = '[out:json];' + value;
@@ -103,6 +62,27 @@ export default function QueryEditor({
       setLoading(false);
     }
   }, [value, setElements]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const { value } = e.currentTarget; // Get the current value of the textarea
+
+    if (e.key === 'Tab') {
+      e.preventDefault(); // Prevent the default tab behavior
+
+      const cursorPosition = e.currentTarget.selectionStart; // Get the current cursor position
+      const tab = '\t'; // Define the tab character
+
+      // Set the new value with the tab character inserted
+      e.currentTarget.value =
+        value.substring(0, cursorPosition) +
+        tab +
+        value.substring(e.currentTarget.selectionEnd);
+
+      // Reset the cursor position to be after the inserted tab
+      e.currentTarget.selectionStart = cursorPosition + 1;
+      e.currentTarget.selectionEnd = cursorPosition + 1;
+    }
+  };
 
   return (
     <div className={cn('flex h-full flex-col gap-2', className)} {...props}>
