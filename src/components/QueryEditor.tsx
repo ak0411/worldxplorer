@@ -1,30 +1,21 @@
 'use client';
 
-import {
-  ComponentProps,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
 import { Element } from '@/lib/types';
 import { cn } from '@/lib/utils';
-
-type Props = {
-  setElements: Dispatch<SetStateAction<Element[]>>;
-};
+import useElementStore from '@/store/store';
 
 export default function QueryEditor({
-  setElements,
   className,
   ...props
-}: Props & ComponentProps<'div'>) {
+}: ComponentProps<'div'>) {
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { fetch: init } = useElementStore();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -47,20 +38,20 @@ export default function QueryEditor({
       }
       const data = await response.json();
       console.info(data);
-      const nodes = data.elements
+      const elements = data.elements
         .filter((element: any) => element.type === 'node')
         .map((element: any) => ({
           id: element.id,
           lat: element.lat,
           lng: element.lon,
-        }));
-      setElements(nodes);
+        })) as Element[];
+      init(elements);
     } catch (error) {
       console.error('Error fetching Overpass data:', error);
     } finally {
       setLoading(false);
     }
-  }, [value, setElements]);
+  }, [value]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const { value } = e.currentTarget;

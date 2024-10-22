@@ -31,7 +31,8 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.169.0",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@types/google.maps": "^3.58.1",

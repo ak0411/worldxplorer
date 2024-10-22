@@ -8,19 +8,20 @@ import {
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
-import { Element } from '@/lib/types';
+import useElementStore from '@/store/store';
 
-interface Props {
-  elements: Element[];
-  onMarkerClick: (index: number) => void;
-  index: number;
-}
+export default function MapViewer() {
+  const { elements, change } = useElementStore();
+  const center =
+    elements.length > 0
+      ? { lat: elements[0].lat, lng: elements[0].lng }
+      : { lat: 0, lng: 0 };
+  const zoom = 15;
 
-export default function MapViewer({ elements, onMarkerClick, index }: Props) {
   return (
     <MapContainer
-      center={{ lat: 0, lng: 0 }}
-      zoom={15}
+      center={center}
+      zoom={zoom}
       className="h-full w-full rounded-b"
       minZoom={3}
     >
@@ -45,26 +46,21 @@ export default function MapViewer({ elements, onMarkerClick, index }: Props) {
             opacity={0.8}
             fillOpacity={0.8}
             eventHandlers={{
-              click: () => onMarkerClick(idx),
+              click: () => change(idx),
             }}
           >
             <Popup>{idx}</Popup>
           </CircleMarker>
         ))}
       </MarkerClusterGroup>
-      <MapController elements={elements} index={index} />
+      <MapController />
     </MapContainer>
   );
 }
 
-function MapController({
-  elements,
-  index,
-}: {
-  elements: Element[];
-  index: number;
-}) {
+function MapController() {
   const map = useMap();
+  const { elements, index } = useElementStore();
 
   // Recenter map
   useEffect(() => {

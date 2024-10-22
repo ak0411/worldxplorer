@@ -4,13 +4,9 @@ import QueryEditor from '@/components/QueryEditor';
 import { Separator } from '@/components/ui/separator';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { useState } from 'react';
-import { Element } from '@/lib/types';
 import Viewer from '@/components/Viewer';
 
-type Props = {};
-
-export default function Overpass({}: Props) {
-  const [elements, setElements] = useState<Element[]>([]);
+export default function Overpass() {
   const [isQueryEditorCollapsed, setIsQueryEditorCollapsed] = useState(false);
 
   return (
@@ -23,13 +19,13 @@ export default function Overpass({}: Props) {
           onExpand={() => setIsQueryEditorCollapsed(false)}
           defaultSize={30}
         >
-          <QueryEditor setElements={setElements} />
+          <QueryEditor />
         </Panel>
         <PanelResizeHandle className="flex items-center">
           <Separator orientation="vertical" className="h-[400px]" />
         </PanelResizeHandle>
         <Panel minSize={30} defaultSize={70}>
-          <Viewer elements={elements} />
+          <Viewer />
         </Panel>
       </PanelGroup>
     </div>

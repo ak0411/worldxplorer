@@ -5,20 +5,15 @@ import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
+import useElementStore from '@/store/store';
 
 type Props = {
-  elements: Element[];
-  index: number;
-  setIndex: (value: React.SetStateAction<number>) => void;
-  toggleMap: () => void;
+  toggleMapPanel: () => void;
 };
 
-export default function StreetViewer({
-  elements,
-  index,
-  setIndex,
-  toggleMap,
-}: Props) {
+export default function StreetViewer({ toggleMapPanel }: Props) {
+  const { elements, index, prev, next, random } = useElementStore();
+
   const [streetView, setStreetView] =
     useState<google.maps.LatLngLiteral | null>(null);
 
@@ -68,28 +63,16 @@ export default function StreetViewer({
             </div>
           )}
           <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-2">
-            <Button
-              onClick={() =>
-                setIndex(
-                  (prev) => (prev - 1 + elements.length) % elements.length
-                )
-              }
-            >
+            <Button onClick={prev}>
               <ChevronLeft />
             </Button>
-            <Button
-              onClick={() =>
-                setIndex(Math.floor(Math.random() * elements.length))
-              }
-            >
+            <Button onClick={random}>
               <Dices />
             </Button>
-            <Button onClick={toggleMap}>
+            <Button onClick={toggleMapPanel}>
               <Map />
             </Button>
-            <Button
-              onClick={() => setIndex((prev) => (prev + 1) % elements.length)}
-            >
+            <Button onClick={next}>
               <ChevronRight />
             </Button>
           </div>
