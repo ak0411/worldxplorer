@@ -20,7 +20,7 @@ const useElementStore = create<ElementStore>((set) => ({
       index: (state.index - 1 + state.elements.length) % state.elements.length,
     })),
   next: () =>
-    set((state) => ({ index: (state.index + 1) & state.elements.length })),
+    set((state) => ({ index: (state.index + 1) % state.elements.length })),
   random: () =>
     set((state) => ({
       index: Math.floor(Math.random() * state.elements.length),
