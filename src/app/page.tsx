@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Globe, Map, Compass, Users, Camera } from 'lucide-react';
+import { Globe, Map, Compass, Users, Camera, Code } from 'lucide-react';
 import FeatureCard from '@/components/FeatureCard';
 import TestimonialCard from '@/components/TestimonialCard';
 
@@ -17,11 +17,18 @@ export default function Home() {
             Embark on a virtual journey around the world. Discover new places,
             cultures, and perspectives from the comfort of your home.
           </p>
-          <Link href="/explore">
-            <Button size="lg" className="text-lg" variant="outline">
-              <Globe className="mr-2 h-5 w-5" /> Start Exploring
-            </Button>
-          </Link>
+          <div className="mx-auto flex max-w-xs flex-col gap-2">
+            <Link href="/explore">
+              <Button size="lg" className="w-full text-lg" variant="outline">
+                <Globe className="mr-2 h-5 w-5" /> Start Exploring
+              </Button>
+            </Link>
+            <Link href="/overpass">
+              <Button size="lg" className="w-full text-lg" variant="outline">
+                <Code className="mr-2 h-5 w-5" /> Overpass
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
