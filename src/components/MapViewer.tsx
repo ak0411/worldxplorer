@@ -1,22 +1,20 @@
-'use client';
-
+import { useEffect } from 'react';
 import {
   MapContainer,
   TileLayer,
+  CircleMarker,
   Popup,
   useMap,
-  CircleMarker,
 } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import { Element } from '@/lib/types';
-import MarkerClusterGroup from 'react-leaflet-cluster';
-import { useEffect } from 'react';
 
-type Props = {
+interface Props {
   elements: Element[];
-  onMarkerClick: (id: number) => void;
+  onMarkerClick: (index: number) => void;
   index: number;
-};
+}
 
 export default function MapViewer({ elements, onMarkerClick, index }: Props) {
   return (
@@ -36,7 +34,7 @@ export default function MapViewer({ elements, onMarkerClick, index }: Props) {
         spiderfyOnMaxZoom={false}
         disableClusteringAtZoom={16}
       >
-        {elements.map((point, index) => (
+        {elements.map((point, idx) => (
           <CircleMarker
             key={point.id}
             center={{ lat: point.lat, lng: point.lng }}
@@ -47,19 +45,19 @@ export default function MapViewer({ elements, onMarkerClick, index }: Props) {
             opacity={0.8}
             fillOpacity={0.8}
             eventHandlers={{
-              click: () => onMarkerClick(index),
+              click: () => onMarkerClick(idx),
             }}
           >
-            <Popup>{index}</Popup>
+            <Popup>{idx}</Popup>
           </CircleMarker>
         ))}
       </MarkerClusterGroup>
-      <MapComponent elements={elements} index={index} />
+      <MapController elements={elements} index={index} />
     </MapContainer>
   );
 }
 
-function MapComponent({
+function MapController({
   elements,
   index,
 }: {

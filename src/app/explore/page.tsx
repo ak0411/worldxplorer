@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, Star, Camera } from 'lucide-react';
+import { Loader2, ArrowLeft, Star, Camera, Dices } from 'lucide-react';
 import getRandomStreetViewable from '@/utils/getStreetViewable';
 import {
   Select,
@@ -81,7 +81,9 @@ export default function ExplorePage() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button onClick={handleEnter}>Go</Button>
+              <Button onClick={handleEnter}>
+                <Dices />
+              </Button>
               <Button variant="outline">
                 <Camera className="size-4" />
               </Button>
