@@ -15,7 +15,7 @@ export default function MapViewer() {
   const center =
     elements.length > 0
       ? { lat: elements[0].lat, lng: elements[0].lng }
-      : { lat: 0, lng: 0 };
+      : { lat: 59.64371849536629, lng: 17.08158297797216 };
   const zoom = 15;
 
   return (
@@ -67,7 +67,7 @@ function MapController() {
     const center =
       elements.length > 0 && index < elements.length
         ? { lat: elements[index].lat, lng: elements[index].lng }
-        : { lat: 0, lng: 0 };
+        : { lat: 59.64371849536629, lng: 17.08158297797216 };
 
     const currentZoom = map.getZoom();
     map.setView(center, currentZoom);

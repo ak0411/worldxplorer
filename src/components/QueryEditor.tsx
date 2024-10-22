@@ -37,7 +37,6 @@ export default function QueryEditor({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.info(data);
       const elements = data.elements
         .filter((element: any) => element.type === 'node')
         .map((element: any) => ({

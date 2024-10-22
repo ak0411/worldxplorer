@@ -9,20 +9,20 @@ import {
 import MapViewer from '@/components/MapViewer';
 
 export default function Viewer() {
-  const streetviewRef = useRef<ImperativePanelHandle>(null);
-  const mapRef = useRef<ImperativePanelHandle>(null);
+  const panoPanelRef = useRef<ImperativePanelHandle>(null);
+  const mapPanelRef = useRef<ImperativePanelHandle>(null);
 
   useEffect(() => {
-    if (mapRef.current) {
-      mapRef.current.collapse();
+    if (mapPanelRef.current) {
+      mapPanelRef.current.collapse();
     }
   }, []);
 
   const toggleMapPanel = () => {
-    const panel = mapRef.current;
+    const panel = mapPanelRef.current;
     if (panel) {
       if (panel.isCollapsed()) {
-        panel.expand();
+        panel.expand(30);
       } else {
         panel.collapse();
       }
@@ -35,13 +35,13 @@ export default function Viewer() {
         collapsible
         minSize={10}
         defaultSize={100}
-        ref={streetviewRef}
+        ref={panoPanelRef}
         className="relative"
       >
         <StreetViewer toggleMapPanel={toggleMapPanel} />
       </Panel>
       <PanelResizeHandle />
-      <Panel collapsible minSize={10} ref={mapRef}>
+      <Panel collapsible minSize={10} ref={mapPanelRef}>
         <MapViewer />
       </Panel>
     </PanelGroup>
