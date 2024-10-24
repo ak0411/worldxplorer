@@ -21,7 +21,7 @@
     "geojson-places": "^1.0.8",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.446.0",
-    "next": "15.0.0-rc.0",
+    "next": "^15.0.1",
     "next-themes": "^0.3.0",
     "react": "19.0.0-rc-2d16326d-20240930",
     "react-dom": "19.0.0-rc-2d16326d-20240930",
