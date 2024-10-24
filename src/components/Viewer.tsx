@@ -6,10 +6,20 @@ import {
   PanelGroup,
   PanelResizeHandle,
 } from 'react-resizable-panels';
-import MapViewer from '@/components/MapViewer';
+import dynamic from 'next/dynamic';
+
+const MapViewer = dynamic(() => import('@/components/MapViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-muted/30">
+      <div className="animate-pulse text-lg text-muted-foreground">
+        Loading map...
+      </div>
+    </div>
+  ),
+});
 
 export default function Viewer() {
-  const panoPanelRef = useRef<ImperativePanelHandle>(null);
   const mapPanelRef = useRef<ImperativePanelHandle>(null);
 
   useEffect(() => {
@@ -31,17 +41,11 @@ export default function Viewer() {
 
   return (
     <PanelGroup direction="vertical">
-      <Panel
-        collapsible
-        minSize={10}
-        defaultSize={100}
-        ref={panoPanelRef}
-        className="relative"
-      >
+      <Panel collapsible minSize={10} defaultSize={100}>
         <StreetViewer toggleMapPanel={toggleMapPanel} />
       </Panel>
       <PanelResizeHandle />
-      <Panel collapsible minSize={10} ref={mapPanelRef}>
+      <Panel collapsible minSize={10} defaultSize={0} ref={mapPanelRef}>
         <MapViewer />
       </Panel>
     </PanelGroup>

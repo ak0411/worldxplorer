@@ -4,7 +4,7 @@ import { create } from 'zustand';
 export type ElementStore = {
   elements: Element[];
   index: number;
-  fetch: (elements: Element[]) => void;
+  fetchElements: (elements: Element[]) => void;
   prev: () => void;
   next: () => void;
   random: () => void;
@@ -14,7 +14,7 @@ export type ElementStore = {
 const useElementStore = create<ElementStore>((set) => ({
   elements: [],
   index: 0,
-  fetch: (elements) => set({ elements, index: 0 }),
+  fetchElements: (elements) => set({ elements, index: 0 }),
   prev: () =>
     set((state) => ({
       index: (state.index - 1 + state.elements.length) % state.elements.length,

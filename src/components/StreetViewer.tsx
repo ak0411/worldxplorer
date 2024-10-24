@@ -1,6 +1,5 @@
 'use client';
 
-import { Element } from '@/lib/types';
 import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';

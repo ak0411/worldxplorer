@@ -1,10 +1,14 @@
 'use client';
 
-import QueryEditor from '@/components/QueryEditor';
 import { Separator } from '@/components/ui/separator';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Viewer from '@/components/Viewer';
+
+const QueryEditor = dynamic(() => import('@/components/QueryEditor'), {
+  ssr: false,
+});
 
 export default function Overpass() {
   const [isQueryEditorCollapsed, setIsQueryEditorCollapsed] = useState(false);

@@ -15,13 +15,10 @@ export default function QueryEditor({
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { fetch: init } = useElementStore();
+  const { fetchElements: loadElements } = useElementStore();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedValue = localStorage.getItem('queryValue') || '';
-      setValue(storedValue);
-    }
+    setValue(localStorage.getItem('queryValue') || '');
   }, []);
 
   const handleQuery = useCallback(async () => {
@@ -44,7 +41,7 @@ export default function QueryEditor({
           lat: element.lat,
           lng: element.lon,
         })) as Element[];
-      init(elements);
+      loadElements(elements);
     } catch (error) {
       console.error('Error fetching Overpass data:', error);
     } finally {
