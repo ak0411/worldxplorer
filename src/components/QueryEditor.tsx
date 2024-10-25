@@ -13,7 +13,7 @@ export default function QueryEditor({
   ...props
 }: ComponentProps<'div'>) {
   const [value, setValue] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { loadingQuery, setLoadingQuery } = useElementStore();
 
   const { fetchElements: loadElements } = useElementStore();
 
@@ -23,8 +23,8 @@ export default function QueryEditor({
 
   const handleQuery = useCallback(async () => {
     localStorage.setItem('queryValue', value);
-    const query = '[out:json];' + value;
-    setLoading(true);
+    const query = '[out:json][timeout:300];' + value;
+    setLoadingQuery(true);
     try {
       const response = await fetch('https://overpass-api.de/api/interpreter', {
         method: 'POST',
@@ -35,17 +35,19 @@ export default function QueryEditor({
       }
       const data = await response.json();
       const elements = data.elements
-        .filter((element: any) => element.type === 'node')
+        .filter(
+          (element: any) => element.type === 'node' || element.type === 'way'
+        )
         .map((element: any) => ({
           id: element.id,
-          lat: element.lat,
-          lng: element.lon,
+          lat: element.type === 'way' ? element.center.lat : element.lat,
+          lng: element.type === 'way' ? element.center.lon : element.lon,
         })) as Element[];
       loadElements(elements);
     } catch (error) {
       console.error('Error fetching Overpass data:', error);
     } finally {
-      setLoading(false);
+      setLoadingQuery(false);
     }
   }, [value]);
 
@@ -78,7 +80,7 @@ export default function QueryEditor({
         onKeyDown={handleKeyDown}
       />
       <Button onClick={handleQuery}>
-        {loading ? (
+        {loadingQuery ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />
             Loading...

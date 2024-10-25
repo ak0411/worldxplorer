@@ -7,6 +7,8 @@ import {
   PanelResizeHandle,
 } from 'react-resizable-panels';
 import dynamic from 'next/dynamic';
+import useElementStore from '@/store/store';
+import { Loader2 } from 'lucide-react';
 
 const MapViewer = dynamic(() => import('@/components/MapViewer'), {
   ssr: false,
@@ -21,6 +23,7 @@ const MapViewer = dynamic(() => import('@/components/MapViewer'), {
 
 export default function Viewer() {
   const mapPanelRef = useRef<ImperativePanelHandle>(null);
+  const { loadingQuery } = useElementStore();
 
   useEffect(() => {
     if (mapPanelRef.current) {
@@ -39,7 +42,11 @@ export default function Viewer() {
     }
   };
 
-  return (
+  return loadingQuery ? (
+    <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+      <Loader2 className="size-12 animate-spin text-muted-foreground/50" />
+    </div>
+  ) : (
     <PanelGroup direction="vertical">
       <Panel collapsible minSize={10} defaultSize={100}>
         <StreetViewer toggleMapPanel={toggleMapPanel} />

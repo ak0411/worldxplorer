@@ -13,67 +13,71 @@ import 'leaflet/dist/leaflet.css';
 import useElementStore from '@/store/store';
 
 export default function MapViewer() {
-  const { elements, change } = useElementStore();
+  const { elements, access } = useElementStore();
   const center =
-    elements.length > 0
+    elements && elements.length > 0
       ? { lat: elements[0].lat, lng: elements[0].lng }
       : { lat: 59.64371849536629, lng: 17.08158297797216 };
   const zoom = 15;
 
   return (
-    <MapContainer
-      center={center}
-      zoom={zoom}
-      className="h-full w-full rounded-b"
-      minZoom={3}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <MarkerClusterGroup
-        chunkedLoading
-        maxClusterRadius={50}
-        spiderfyOnMaxZoom={false}
-        disableClusteringAtZoom={16}
+    elements && (
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        className="h-full w-full rounded-b"
+        minZoom={3}
       >
-        {elements.map((point, idx) => (
-          <CircleMarker
-            key={point.id}
-            center={{ lat: point.lat, lng: point.lng }}
-            radius={5}
-            fillColor="#3388ff"
-            color="#3388ff"
-            weight={1}
-            opacity={0.8}
-            fillOpacity={0.8}
-            eventHandlers={{
-              click: () => change(idx),
-            }}
-          >
-            <Popup>{idx}</Popup>
-          </CircleMarker>
-        ))}
-      </MarkerClusterGroup>
-      <MapController />
-    </MapContainer>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <MarkerClusterGroup
+          chunkedLoading
+          maxClusterRadius={50}
+          spiderfyOnMaxZoom={false}
+          disableClusteringAtZoom={16}
+        >
+          {elements.map((point, idx) => (
+            <CircleMarker
+              key={point.id}
+              center={{ lat: point.lat, lng: point.lng }}
+              radius={5}
+              fillColor="#3388ff"
+              color="#3388ff"
+              weight={1}
+              opacity={0.8}
+              fillOpacity={0.8}
+              eventHandlers={{
+                click: () => access(idx),
+              }}
+            >
+              <Popup>{idx}</Popup>
+            </CircleMarker>
+          ))}
+        </MarkerClusterGroup>
+        <MapController />
+      </MapContainer>
+    )
   );
 }
 
 function MapController() {
   const map = useMap();
-  const { elements, index } = useElementStore();
+  const { elements, currentIndex } = useElementStore();
+
+  if (!elements) return null;
 
   // Recenter map
   useEffect(() => {
     const center =
-      elements.length > 0 && index < elements.length
-        ? { lat: elements[index].lat, lng: elements[index].lng }
+      elements.length > 0 && currentIndex < elements.length
+        ? { lat: elements[currentIndex].lat, lng: elements[currentIndex].lng }
         : { lat: 59.64371849536629, lng: 17.08158297797216 };
 
     const currentZoom = map.getZoom();
     map.setView(center, currentZoom);
-  }, [elements, index, map]);
+  }, [elements, currentIndex, map]);
 
   // Observe size changes
   useEffect(() => {
