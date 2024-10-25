@@ -20,7 +20,7 @@ const StreetViewButton = ({
   return (
     <Button
       onClick={onClick}
-      className="rounded-sm bg-[#444] text-[#b3b3b3] transition-all hover:bg-[#444] hover:text-[#ffffff]"
+      className="rounded-[2px] bg-[#444] text-[#b3b3b3] transition-all hover:bg-[#444] hover:text-[#ffffff]"
     >
       {children}
     </Button>
@@ -35,7 +35,7 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
 
   useEffect(() => {
     const fetchStreetViewable = async () => {
-      if (elements && elements.length > 0 && currentIndex < elements.length) {
+      if (elements && elements.length > 0) {
         const location = await getStreetViewable(
           elements[currentIndex].lat,
           elements[currentIndex].lng
@@ -104,7 +104,7 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
         </>
       ) : (
         <div className="flex h-full items-center justify-center rounded bg-secondary">
-          <p className="text-xl">Run a query to view Street View</p>
+          <p className="text-xl">Run a query to Street View</p>
         </div>
       )}
     </div>

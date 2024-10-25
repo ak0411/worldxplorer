@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 import {
   MapContainer,
@@ -71,7 +69,7 @@ function MapController() {
   // Recenter map
   useEffect(() => {
     const center =
-      elements.length > 0 && currentIndex < elements.length
+      elements.length > 0
         ? { lat: elements[currentIndex].lat, lng: elements[currentIndex].lng }
         : { lat: 59.64371849536629, lng: 17.08158297797216 };
 
