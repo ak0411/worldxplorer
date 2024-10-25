@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import StreetViewer from '@/components/StreetViewer';
 import {
   ImperativePanelHandle,
   Panel,
@@ -9,6 +8,7 @@ import {
 import dynamic from 'next/dynamic';
 import useElementStore from '@/store/store';
 import { Loader2 } from 'lucide-react';
+import StreetViewer from './StreetViewer';
 
 const MapViewer = dynamic(() => import('@/components/MapViewer'), {
   ssr: false,

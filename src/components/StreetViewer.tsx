@@ -5,6 +5,15 @@ import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
 import useElementStore from '@/store/store';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 type StreetViewerProps = {
   toggleMapPanel: () => void;
@@ -33,18 +42,41 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
   const [streetView, setStreetView] =
     useState<google.maps.LatLngLiteral | null>(null);
 
+  const [streetViewSource, setStreetViewSource] =
+    useState<google.maps.StreetViewSource | null>(null);
+
+  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadGoogleMaps = async () => {
+      if (typeof window !== 'undefined' && !isGoogleMapsLoaded) {
+        const { Loader } = await import('@googlemaps/js-api-loader');
+        const loader = new Loader({
+          apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+          version: 'weekly',
+          libraries: ['places'],
+        });
+        await loader.importLibrary('core');
+        setIsGoogleMapsLoaded(true);
+        setStreetViewSource(google.maps.StreetViewSource.DEFAULT);
+      }
+    };
+    loadGoogleMaps();
+  }, [isGoogleMapsLoaded]);
+
   useEffect(() => {
     const fetchStreetViewable = async () => {
-      if (elements && elements.length > 0) {
+      if (elements && elements.length > 0 && streetViewSource) {
         const location = await getStreetViewable(
           elements[currentIndex].lat,
-          elements[currentIndex].lng
+          elements[currentIndex].lng,
+          streetViewSource
         );
         setStreetView(location);
       }
     };
     fetchStreetViewable();
-  }, [currentIndex, elements]);
+  }, [currentIndex, elements, streetViewSource, isGoogleMapsLoaded]);
 
   return (
     <div className="relative h-full w-full">
@@ -98,6 +130,34 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
                 <StreetViewButton onClick={next}>
                   <ChevronRight />
                 </StreetViewButton>
+              </div>
+              <div className="absolute left-0 top-0 flex w-full justify-center">
+                <Select
+                  value={
+                    streetViewSource || google.maps.StreetViewSource.DEFAULT
+                  }
+                  onValueChange={(value) =>
+                    setStreetViewSource(value as google.maps.StreetViewSource)
+                  }
+                >
+                  <SelectTrigger className="mt-2 w-fit rounded-[2px] border-none bg-primary/75 text-muted">
+                    <SelectValue placeholder="Select a Street View Source" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-[2px] border-none bg-primary/75 text-muted">
+                    <SelectGroup>
+                      <SelectLabel>Street View Source</SelectLabel>
+                      <SelectItem value={google.maps.StreetViewSource.DEFAULT}>
+                        Default
+                      </SelectItem>
+                      <SelectItem value={google.maps.StreetViewSource.GOOGLE}>
+                        Google
+                      </SelectItem>
+                      <SelectItem value={google.maps.StreetViewSource.OUTDOOR}>
+                        Outdoor
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             </>
           )}

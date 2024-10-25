@@ -10,7 +10,8 @@ const loader = new Loader({
 
 export async function getStreetViewable(
   lat: number,
-  lng: number
+  lng: number,
+  source?: google.maps.StreetViewSource
 ): Promise<google.maps.LatLngLiteral | null> {
   return new Promise((resolve) => {
     loader.importLibrary('streetView').then(() => {
@@ -20,7 +21,7 @@ export async function getStreetViewable(
           preference: google.maps.StreetViewPreference.NEAREST,
           location: { lat, lng },
           radius: 1000,
-          sources: [google.maps.StreetViewSource.DEFAULT],
+          sources: [source || google.maps.StreetViewSource.DEFAULT],
         },
         async (data, status) => {
           if (status === 'OK' && data) {
