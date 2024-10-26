@@ -4,9 +4,9 @@ import { Separator } from '@/components/ui/separator';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import Viewer from '@/components/Viewer';
+import Viewer from '@/components/overpass/Viewer';
 
-const QueryEditor = dynamic(() => import('@/components/QueryEditor'), {
+const QueryEditor = dynamic(() => import('@/components/overpass/QueryEditor'), {
   ssr: false,
 });
 

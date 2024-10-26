@@ -1,8 +1,8 @@
 'use client';
 
 import { ComponentProps, useCallback, useEffect, useState } from 'react';
-import { Textarea } from './ui/textarea';
-import { Button } from './ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Element } from '@/lib/types';
 import { cn } from '@/lib/utils';

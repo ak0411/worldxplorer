@@ -8,10 +8,10 @@ import {
 import dynamic from 'next/dynamic';
 import useElementStore from '@/store/store';
 import { Loader2 } from 'lucide-react';
-import StreetViewer from './StreetViewer';
-import { Button } from './ui/button';
+import StreetViewer from '@/components/overpass/StreetViewer';
+import { Button } from '@/components/ui/button';
 
-const MapViewer = dynamic(() => import('@/components/MapViewer'), {
+const MapViewer = dynamic(() => import('@/components/overpass/MapViewer'), {
   ssr: false,
   loading: () => (
     <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-muted/30">

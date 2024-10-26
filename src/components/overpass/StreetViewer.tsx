@@ -2,7 +2,7 @@
 
 import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
 import useElementStore from '@/store/store';
 import {
@@ -13,7 +13,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from './ui/select';
+} from '@/components/ui/select';
 
 type StreetViewerProps = {
   toggleMapPanel: () => void;
