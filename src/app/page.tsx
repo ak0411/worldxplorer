@@ -63,7 +63,7 @@ export default function Home() {
             }}
           />
           <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-20 text-center sm:px-6 lg:px-8">
-            <Globe2 className="mx-auto h-20 w-20 animate-pulse text-primary" />
+            <Globe2 className="mx-auto h-20 w-20 animate-bounce text-primary" />
             <h1 className="mt-6 text-4xl font-bold tracking-tight text-primary sm:text-6xl">
               WorldXplorer
             </h1>
@@ -73,7 +73,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <div className="mx-auto -mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto -mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Modes Section */}
           <div className="grid gap-8 md:grid-cols-2">
             {modes.map((mode) => (

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Element } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import useElementStore from '@/store/store';
+import { useElementStore } from '@/store/index';
 import Link from 'next/link';
 import {
   Tooltip,
@@ -90,17 +90,17 @@ export default function QueryEditor({
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL"
+                href="https://osm-queries.ldodds.com/tutorial/"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <Button variant="link">What is Overpass QL?</Button>
+                <Button variant="link">How to write Overpass QL query?</Button>
               </Link>
             </TooltipTrigger>
             <TooltipContent>
               <p>
                 More information about how to write Overpass queries can be
-                found in the OSM wiki.
+                found in the link.
               </p>
             </TooltipContent>
           </Tooltip>

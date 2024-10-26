@@ -6,7 +6,7 @@ import {
   PanelResizeHandle,
 } from 'react-resizable-panels';
 import dynamic from 'next/dynamic';
-import useElementStore from '@/store/store';
+import { useElementStore } from '@/store/index';
 import { Loader2 } from 'lucide-react';
 import StreetViewer from '@/components/overpass/StreetViewer';
 import { Button } from '@/components/ui/button';

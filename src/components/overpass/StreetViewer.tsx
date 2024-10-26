@@ -4,7 +4,7 @@ import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
-import useElementStore from '@/store/store';
+import { useElementStore } from '@/store/index';
 import {
   Select,
   SelectContent,
@@ -90,16 +90,16 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
             <>
               <div className="absolute bottom-2 left-2 rounded bg-primary/80 p-2 text-xs text-green-500">
                 <p>total locations: {elements.length}</p>
-                <p>index: {currentIndex}</p>
+                <p>location: {currentIndex + 1}</p>
                 {currentIndex < elements.length && (
                   <p>
-                    old: {elements[currentIndex].lat},{' '}
+                    original latlng: {elements[currentIndex].lat},{' '}
                     {elements[currentIndex].lng}
                   </p>
                 )}
                 {streetView && (
                   <p>
-                    new: {streetView.lat}, {streetView.lng}
+                    streetview latlng: {streetView.lat}, {streetView.lng}
                   </p>
                 )}
               </div>

@@ -1,7 +1,8 @@
 import { Element } from '@/lib/types';
+import { LatLng, LatLngBoundsLiteral } from 'leaflet';
 import { create } from 'zustand';
 
-export type ElementStore = {
+type ElementStore = {
   elements: Element[] | null;
   currentIndex: number;
   loadingQuery: boolean;
@@ -13,7 +14,17 @@ export type ElementStore = {
   setLoadingQuery: (isLoading: boolean) => void;
 };
 
-const useElementStore = create<ElementStore>((set) => ({
+type StreetViewerStore = {
+  streetViewer: google.maps.LatLngLiteral;
+  setStreetViewer: (pos: google.maps.LatLngLiteral) => void;
+};
+
+export const useStreetViewerStore = create<StreetViewerStore>((set) => ({
+  streetViewer: { lat: 0, lng: 0 },
+  setStreetViewer: (pos) => set({ streetViewer: pos }),
+}));
+
+export const useElementStore = create<ElementStore>((set) => ({
   elements: null,
   currentIndex: 0,
   loadingQuery: false,
@@ -56,5 +67,3 @@ const useElementStore = create<ElementStore>((set) => ({
     }),
   setLoadingQuery: (loading) => set({ loadingQuery: loading }),
 }));
-
-export default useElementStore;
