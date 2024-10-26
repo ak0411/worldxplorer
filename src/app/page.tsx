@@ -8,11 +8,9 @@ import {
   Twitter,
   View,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import Link from 'next/link';
 import { ModeCard } from '@/components/landing/ModeCard';
 import { FeatureCard } from '@/components/landing/FeatureCard';
+import Footer from '@/components/Footer';
 
 const modes = [
   {
@@ -53,46 +51,47 @@ const features = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-secondary">
-      {/* Hero Section */}
-      <div className="relative">
-        <div
-          className="absolute inset-0 z-0 h-[500px] bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2070')",
-          }}
-        />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-20 text-center sm:px-6 lg:px-8">
-          <Globe2 className="mx-auto h-20 w-20 animate-pulse text-primary" />
-          <h1 className="mt-6 text-4xl font-bold tracking-tight text-primary sm:text-6xl">
-            WorldXplorer
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-xl text-muted-foreground">
-            Embark on virtual journeys across the globe. Discover random
-            locations or explore specific places through custom queries.
-          </p>
-        </div>
-      </div>
-
-      <div className="mx-auto -mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Modes Section */}
-        <div className="grid gap-8 md:grid-cols-2">
-          {modes.map((mode) => (
-            <ModeCard key={mode.title} {...mode} />
-          ))}
-        </div>
-
-        {/* Features Section */}
-        <div className="mt-20 pb-20 text-center">
-          <h2 className="mb-8 text-2xl font-semibold">Why WorldXplorer?</h2>
-          <div className="grid gap-8 sm:grid-cols-3">
-            {features.map((feature) => (
-              <FeatureCard key={feature.title} {...feature} />
-            ))}
+    <>
+      <main className="min-h-screen bg-gradient-to-b from-background to-secondary">
+        {/* Hero Section */}
+        <div className="relative">
+          <div
+            className="absolute inset-0 z-0 h-[500px] bg-cover bg-center opacity-20"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2070')",
+            }}
+          />
+          <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-20 text-center sm:px-6 lg:px-8">
+            <Globe2 className="mx-auto h-20 w-20 animate-pulse text-primary" />
+            <h1 className="mt-6 text-4xl font-bold tracking-tight text-primary sm:text-6xl">
+              WorldXplorer
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-xl text-muted-foreground">
+              Embark on virtual journeys across the globe. Discover random
+              locations or explore specific places through custom queries.
+            </p>
           </div>
         </div>
-      </div>
-    </main>
+        <div className="mx-auto -mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Modes Section */}
+          <div className="grid gap-8 md:grid-cols-2">
+            {modes.map((mode) => (
+              <ModeCard key={mode.title} {...mode} />
+            ))}
+          </div>
+          {/* Features Section */}
+          <div className="mt-20 pb-20 text-center">
+            <h2 className="mb-8 text-2xl font-semibold">Why WorldXplorer?</h2>
+            <div className="grid gap-8 sm:grid-cols-3">
+              {features.map((feature) => (
+                <FeatureCard key={feature.title} {...feature} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
   );
 }
