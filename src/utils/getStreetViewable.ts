@@ -11,7 +11,7 @@ const loader = new Loader({
 export async function getStreetViewable(
   lat: number,
   lng: number,
-  source?: google.maps.StreetViewSource
+  source: google.maps.StreetViewSource | null
 ): Promise<google.maps.LatLngLiteral | null> {
   return new Promise((resolve) => {
     loader.importLibrary('streetView').then(() => {

@@ -22,7 +22,7 @@ export default function QueryEditor({
   const [value, setValue] = useState('');
   const { loadingQuery, setLoadingQuery } = useElementStore();
 
-  const { fetchElements: loadElements } = useElementStore();
+  const { fetchElements } = useElementStore();
 
   useEffect(() => {
     setValue(localStorage.getItem('queryValue') || '');
@@ -50,7 +50,7 @@ export default function QueryEditor({
           lat: element.type === 'way' ? element.center.lat : element.lat,
           lng: element.type === 'way' ? element.center.lon : element.lon,
         })) as Element[];
-      loadElements(elements);
+      fetchElements(elements);
     } catch (error) {
       console.error('Error fetching Overpass data:', error);
     } finally {

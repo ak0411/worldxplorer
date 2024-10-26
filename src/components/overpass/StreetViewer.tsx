@@ -4,7 +4,7 @@ import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
-import { useElementStore } from '@/store/index';
+import { useElementStore, useStreetViewerStore } from '@/store/index';
 import {
   Select,
   SelectContent,
@@ -38,12 +38,12 @@ const StreetViewButton = ({
 
 export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
   const { elements, currentIndex, prev, next, random } = useElementStore();
-
-  const [streetView, setStreetView] =
-    useState<google.maps.LatLngLiteral | null>(null);
-
-  const [streetViewSource, setStreetViewSource] =
-    useState<google.maps.StreetViewSource | null>(null);
+  const {
+    streetViewer,
+    setCurrentPlace,
+    streetViewSource,
+    setStreetViewSource,
+  } = useStreetViewerStore();
 
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
 
@@ -58,25 +58,26 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
         });
         await loader.importLibrary('core');
         setIsGoogleMapsLoaded(true);
-        setStreetViewSource(google.maps.StreetViewSource.DEFAULT);
+        if (elements && currentIndex < elements.length) {
+          setStreetViewSource(google.maps.StreetViewSource.DEFAULT);
+        }
       }
     };
     loadGoogleMaps();
   }, [isGoogleMapsLoaded]);
 
+  const handleStreetViewSource = (source: string) => {
+    setStreetViewSource(source as google.maps.StreetViewSource);
+  };
+
   useEffect(() => {
-    const fetchStreetViewable = async () => {
-      if (elements && elements.length > 0 && streetViewSource) {
-        const location = await getStreetViewable(
-          elements[currentIndex].lat,
-          elements[currentIndex].lng,
-          streetViewSource
-        );
-        setStreetView(location);
-      }
-    };
-    fetchStreetViewable();
-  }, [currentIndex, elements, streetViewSource, isGoogleMapsLoaded]);
+    if (elements && currentIndex < elements.length) {
+      setCurrentPlace({
+        lat: elements[currentIndex].lat,
+        lng: elements[currentIndex].lng,
+      });
+    }
+  }, [elements, currentIndex]);
 
   return (
     <div className="relative h-full w-full">
@@ -91,26 +92,24 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
               <div className="absolute bottom-2 left-2 rounded bg-primary/80 p-2 text-xs text-green-500">
                 <p>total locations: {elements.length}</p>
                 <p>location: {currentIndex + 1}</p>
-                {currentIndex < elements.length && (
+                <p>
+                  original latlng: {elements[currentIndex].lat},{' '}
+                  {elements[currentIndex].lng}
+                </p>
+                {streetViewer && (
                   <p>
-                    original latlng: {elements[currentIndex].lat},{' '}
-                    {elements[currentIndex].lng}
-                  </p>
-                )}
-                {streetView && (
-                  <p>
-                    streetview latlng: {streetView.lat}, {streetView.lng}
+                    streetview latlng: {streetViewer.lat}, {streetViewer.lng}
                   </p>
                 )}
               </div>
-              {streetView ? (
+              {streetViewer ? (
                 <iframe
                   width="100%"
                   height="100%"
                   loading="lazy"
                   allowFullScreen
                   className="rounded"
-                  src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${streetView.lat},${streetView.lng}&fov=100`}
+                  src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${streetViewer.lat},${streetViewer.lng}&fov=100`}
                 />
               ) : (
                 <div className="flex h-full items-center justify-center bg-transparent">
@@ -136,9 +135,7 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
                   value={
                     streetViewSource || google.maps.StreetViewSource.DEFAULT
                   }
-                  onValueChange={(value) =>
-                    setStreetViewSource(value as google.maps.StreetViewSource)
-                  }
+                  onValueChange={handleStreetViewSource}
                 >
                   <SelectTrigger className="mt-2 w-fit rounded-[2px] border-none bg-primary/75 text-muted">
                     <SelectValue placeholder="Select a Street View Source" />

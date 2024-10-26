@@ -5,23 +5,29 @@ import {
   CircleMarker,
   Popup,
   useMap,
+  useMapEvents,
+  Circle,
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
-import useElementStore from '@/store/store';
+import { useElementStore, useStreetViewerStore } from '@/store/index';
 
 export default function MapViewer() {
   const { elements, access } = useElementStore();
-  const center =
-    elements && elements.length > 0
-      ? { lat: elements[0].lat, lng: elements[0].lng }
-      : { lat: 59.64371849536629, lng: 17.08158297797216 };
+  const { streetViewer, setCurrentPlace } = useStreetViewerStore();
+
+  useEffect(() => {
+    if (elements && elements.length > 0) {
+      setCurrentPlace({ lat: elements[0].lat, lng: elements[0].lng });
+    }
+  }, [elements]);
+
   const zoom = 15;
 
   return (
     elements && (
       <MapContainer
-        center={center}
+        center={streetViewer || [0, 0]}
         zoom={zoom}
         className="h-full w-full rounded-b"
         minZoom={3}
@@ -30,6 +36,17 @@ export default function MapViewer() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        {streetViewer && (
+          <CircleMarker
+            center={streetViewer}
+            radius={5}
+            fillColor="#ff3333"
+            color="#ff3333"
+            weight={1}
+            opacity={0.8}
+            fillOpacity={0.8}
+          />
+        )}
         <MarkerClusterGroup
           chunkedLoading
           maxClusterRadius={50}
@@ -50,11 +67,12 @@ export default function MapViewer() {
                 click: () => access(idx),
               }}
             >
-              <Popup>{idx}</Popup>
+              <Popup>Location #{idx + 1}</Popup>
             </CircleMarker>
           ))}
         </MarkerClusterGroup>
         <MapController />
+        <LocationFinder />
       </MapContainer>
     )
   );
@@ -63,6 +81,7 @@ export default function MapViewer() {
 function MapController() {
   const map = useMap();
   const { elements, currentIndex } = useElementStore();
+  const { setStreetViewer } = useStreetViewerStore();
 
   if (!elements) return null;
 
@@ -71,10 +90,11 @@ function MapController() {
     const center =
       elements.length > 0
         ? { lat: elements[currentIndex].lat, lng: elements[currentIndex].lng }
-        : { lat: 59.64371849536629, lng: 17.08158297797216 };
+        : { lat: 0, lng: 0 };
 
     const currentZoom = map.getZoom();
     map.setView(center, currentZoom);
+    setStreetViewer(center);
   }, [elements, currentIndex, map]);
 
   // Observe size changes
@@ -97,3 +117,14 @@ function MapController() {
 
   return null;
 }
+
+const LocationFinder = () => {
+  const { setStreetViewer } = useStreetViewerStore();
+  useMapEvents({
+    click(e) {
+      console.log(e.latlng);
+      setStreetViewer(e.latlng);
+    },
+  });
+  return null;
+};
