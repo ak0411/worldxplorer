@@ -3,10 +3,17 @@
 import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
-import { Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Element } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import useElementStore from '@/store/store';
+import Link from 'next/link';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function QueryEditor({
   className,
@@ -72,9 +79,36 @@ export default function QueryEditor({
 
   return (
     <div className={cn('flex h-full flex-col gap-2', className)} {...props}>
+      <div className="flex justify-between">
+        <Link href="/">
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 size-4" />
+            Back
+          </Button>
+        </Link>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <Button variant="link">What is Overpass QL?</Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                More information about how to write Overpass queries can be
+                found in the OSM wiki.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <Textarea
         className="flex-grow bg-secondary p-2 text-lg"
-        placeholder="Enter your Overpass QL query here..."
+        placeholder="Enter your query here..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}

@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import useElementStore from '@/store/store';
 import { Loader2 } from 'lucide-react';
 import StreetViewer from './StreetViewer';
+import { Button } from './ui/button';
 
 const MapViewer = dynamic(() => import('@/components/MapViewer'), {
   ssr: false,
@@ -44,7 +45,10 @@ export default function Viewer() {
 
   return loadingQuery ? (
     <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
-      <Loader2 className="size-12 animate-spin text-muted-foreground/50" />
+      <Button disabled>
+        <Loader2 className="mr-2 size-4 animate-spin" />
+        Loading...
+      </Button>
     </div>
   ) : (
     <PanelGroup direction="vertical">

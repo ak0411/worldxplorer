@@ -16,7 +16,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: 'WorldXplorer',
-  description: 'Explore new places and make memories.',
+  description:
+    'Explore the world through Street View with random locations and custom Overpass QL queries.',
 };
 
 export default function RootLayout({

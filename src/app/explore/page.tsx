@@ -14,7 +14,7 @@ import {
 import countries from '@/public/countries.json';
 import Link from 'next/link';
 
-export default function ExplorePage() {
+export default function Explore() {
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [streetViewUrl, setStreetViewUrl] = useState<string | null>(null);
 
@@ -42,6 +42,7 @@ export default function ExplorePage() {
 
   const handleCountrySelect = (value: string | null) => {
     setSelectedCountry(value as string);
+    getRandomLocation(value as string);
   };
 
   const handleEnter = () => {
@@ -84,7 +85,7 @@ export default function ExplorePage() {
               <Button onClick={handleEnter}>
                 <Dices />
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" disabled>
                 <Camera className="size-4" />
               </Button>
               <Button variant="outline" disabled>

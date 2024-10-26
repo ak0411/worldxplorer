@@ -18,7 +18,7 @@ export default function Overpass() {
       <PanelGroup direction="horizontal" className="flex gap-2">
         <Panel
           collapsible
-          minSize={10}
+          minSize={15}
           onCollapse={() => setIsQueryEditorCollapsed(true)}
           onExpand={() => setIsQueryEditorCollapsed(false)}
           defaultSize={30}
