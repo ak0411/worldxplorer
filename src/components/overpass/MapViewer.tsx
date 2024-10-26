@@ -6,7 +6,6 @@ import {
   Popup,
   useMap,
   useMapEvents,
-  Circle,
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';

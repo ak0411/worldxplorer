@@ -1,6 +1,5 @@
 'use client';
 
-import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
