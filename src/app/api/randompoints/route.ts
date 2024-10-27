@@ -1,7 +1,7 @@
 import borders from '@/public/genBorders.json' with { type: 'json' };
 import { NextRequest, NextResponse } from 'next/server';
 
-export function getRandomPointInCountry(
+function getRandomPointInCountry(
   countryCode: string | boolean = true
 ): number[] | null {
   const features = borders.features.filter((feature: any) =>
