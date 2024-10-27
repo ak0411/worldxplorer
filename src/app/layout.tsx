@@ -28,7 +28,14 @@ export default function RootLayout({
   return (
     <>
       <html lang="en" suppressHydrationWarning>
-        <head />
+        <head>
+          <link
+            rel="preconnect"
+            href="https://maps.googleapis.com"
+            crossOrigin="use-credentials"
+          />
+          <link rel="dns-prefetch" href="https://maps.googleapis.com" />
+        </head>
         <body
           className={`${geistSans.className} ${geistMono.className} antialiased`}
         >

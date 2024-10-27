@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import countries from '@/public/countries.json';
 import Link from 'next/link';
+import GoogleButton from '@/components/shared/GoogleButton';
 
 export default function Explore() {
   const [selectedCountry, setSelectedCountry] = useState('all');
@@ -59,19 +60,19 @@ export default function Explore() {
           <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 transform">
             <div className="flex items-center gap-4">
               <Link href="/">
-                <Button variant="outline">
+                <GoogleButton>
                   <ArrowLeft className="mr-2 size-4" />
                   Back
-                </Button>
+                </GoogleButton>
               </Link>
               <Select
                 value={selectedCountry}
                 onValueChange={handleCountrySelect}
               >
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-[200px] rounded-[2px] border-none bg-primary/75 text-muted">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-[2px] border-none bg-primary/75 text-muted">
                   <SelectItem value="all" defaultChecked>
                     Any country
                   </SelectItem>
@@ -82,15 +83,15 @@ export default function Explore() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button onClick={handleEnter}>
+              <GoogleButton onClick={handleEnter}>
                 <Dices />
-              </Button>
-              <Button variant="outline" disabled>
+              </GoogleButton>
+              <GoogleButton>
                 <Camera className="size-4" />
-              </Button>
-              <Button variant="outline" disabled>
+              </GoogleButton>
+              <GoogleButton>
                 <Star className="size-4" />
-              </Button>
+              </GoogleButton>
             </div>
           </div>
         </>

@@ -1,10 +1,14 @@
 'use client';
 
 import { Separator } from '@/components/ui/separator';
-import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Viewer from '@/components/overpass/Viewer';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 
 const QueryEditor = dynamic(() => import('@/components/overpass/QueryEditor'), {
   ssr: false,
@@ -15,8 +19,8 @@ export default function Overpass() {
 
   return (
     <div className={`h-screen ${isQueryEditorCollapsed ? 'py-2 pr-2' : 'p-2'}`}>
-      <PanelGroup direction="horizontal" className="flex gap-2">
-        <Panel
+      <ResizablePanelGroup direction="horizontal" className="flex gap-2">
+        <ResizablePanel
           collapsible
           minSize={15}
           onCollapse={() => setIsQueryEditorCollapsed(true)}
@@ -24,14 +28,12 @@ export default function Overpass() {
           defaultSize={30}
         >
           <QueryEditor />
-        </Panel>
-        <PanelResizeHandle className="flex items-center">
-          <Separator orientation="vertical" className="h-[400px]" />
-        </PanelResizeHandle>
-        <Panel minSize={30} defaultSize={70}>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel minSize={30} defaultSize={70}>
           <Viewer />
-        </Panel>
-      </PanelGroup>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

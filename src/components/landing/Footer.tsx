@@ -1,5 +1,6 @@
 import { Globe2, Github, Twitter } from 'lucide-react';
 import Link from 'next/link';
+import { ThemeToggle } from '../ThemeToggle';
 
 export default function Footer() {
   return (
@@ -9,10 +10,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Logo and Description */}
             <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Globe2 className="h-6 w-6" />
-                <span className="text-lg font-semibold">WorldXplorer</span>
-              </div>
+              <span className="text-lg font-semibold">WorldXplorer</span>
               <p className="text-sm text-muted-foreground">
                 Explore the world from your browser through immersive Street
                 View experiences.
@@ -50,7 +48,10 @@ export default function Footer() {
             </div>
             {/* Social Links */}
             <div>
-              <h3 className="mb-3 font-semibold">Connect</h3>
+              <div className="flex justify-between">
+                <h3 className="mb-3 font-semibold">Connect</h3>
+                <ThemeToggle />
+              </div>
               <div className="flex space-x-4">
                 <Link
                   href="/"

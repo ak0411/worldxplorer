@@ -14,42 +14,6 @@ type ElementStore = {
   setLoadingQuery: (isLoading: boolean) => void;
 };
 
-type StreetViewerStore = {
-  streetViewer: google.maps.LatLngLiteral | null;
-  streetViewSource: google.maps.StreetViewSource | null;
-  currentPlace: google.maps.LatLngLiteral | null;
-  setStreetViewer: (pos: google.maps.LatLngLiteral) => void;
-  setStreetViewSource: (source: google.maps.StreetViewSource) => void;
-  setCurrentPlace: (latLng: google.maps.LatLngLiteral) => void;
-};
-
-export const useStreetViewerStore = create<StreetViewerStore>((set, get) => ({
-  streetViewer: null,
-  streetViewSource: null,
-  currentPlace: null,
-  setStreetViewer: async (pos) => {
-    const currentSource = get().streetViewSource;
-    const location = await getStreetViewable(pos.lat, pos.lng, currentSource);
-    set({ streetViewer: location });
-  },
-  setStreetViewSource: async (source) => {
-    const { currentPlace } = get();
-    set({ streetViewSource: source });
-    if (currentPlace) {
-      const location = await getStreetViewable(
-        currentPlace.lat,
-        currentPlace.lng,
-        source
-      );
-      set({ streetViewer: location });
-    }
-  },
-  setCurrentPlace: async (latLng) => {
-    set({ currentPlace: latLng });
-    get().setStreetViewer(latLng);
-  },
-}));
-
 export const useElementStore = create<ElementStore>((set) => ({
   elements: null,
   currentIndex: 0,
@@ -92,4 +56,40 @@ export const useElementStore = create<ElementStore>((set) => ({
       return state;
     }),
   setLoadingQuery: (loading) => set({ loadingQuery: loading }),
+}));
+
+type StreetViewerStore = {
+  streetViewer: google.maps.LatLngLiteral | null;
+  streetViewSource: google.maps.StreetViewSource | null;
+  currentPlace: google.maps.LatLngLiteral | null;
+  setStreetViewer: (pos: google.maps.LatLngLiteral) => void;
+  setStreetViewSource: (source: google.maps.StreetViewSource) => void;
+  setCurrentPlace: (latLng: google.maps.LatLngLiteral) => void;
+};
+
+export const useStreetViewerStore = create<StreetViewerStore>((set, get) => ({
+  streetViewer: null,
+  streetViewSource: null,
+  currentPlace: null,
+  setStreetViewer: async (pos) => {
+    const currentSource = get().streetViewSource;
+    const location = await getStreetViewable(pos.lat, pos.lng, currentSource);
+    set({ streetViewer: location });
+  },
+  setStreetViewSource: async (source) => {
+    const { currentPlace } = get();
+    set({ streetViewSource: source });
+    if (currentPlace) {
+      const location = await getStreetViewable(
+        currentPlace.lat,
+        currentPlace.lng,
+        source
+      );
+      set({ streetViewer: location });
+    }
+  },
+  setCurrentPlace: async (latLng) => {
+    set({ currentPlace: latLng });
+    get().setStreetViewer(latLng);
+  },
 }));

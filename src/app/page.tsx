@@ -1,16 +1,8 @@
-import {
-  Github,
-  Globe2,
-  Map,
-  Navigation2,
-  Search,
-  Shuffle,
-  Twitter,
-  View,
-} from 'lucide-react';
+import { Map, Navigation2, Search, Shuffle, View } from 'lucide-react';
 import { ModeCard } from '@/components/landing/ModeCard';
 import { FeatureCard } from '@/components/landing/FeatureCard';
-import Footer from '@/components/Footer';
+import Footer from '@/components/landing/Footer';
+import { Logo } from '@/components/shared/Logo';
 
 const modes = [
   {
@@ -63,10 +55,11 @@ export default function Home() {
             }}
           />
           <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-20 text-center sm:px-6 lg:px-8">
-            <Globe2 className="mx-auto h-20 w-20 animate-bounce text-primary" />
-            <h1 className="mt-6 text-4xl font-bold tracking-tight text-primary sm:text-6xl">
-              WorldXplorer
-            </h1>
+            <div className="mt-6 flex items-center justify-center text-4xl font-bold tracking-widest text-primary sm:text-6xl">
+              <span>World</span>
+              <Logo className="size-32" />
+              <span>plorer</span>
+            </div>
             <p className="mx-auto mt-4 max-w-2xl text-xl text-muted-foreground">
               Embark on virtual journeys across the globe. Discover random
               locations or explore specific places through custom queries.

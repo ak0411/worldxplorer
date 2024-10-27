@@ -1,15 +1,15 @@
 import { useEffect, useRef } from 'react';
-import {
-  ImperativePanelHandle,
-  Panel,
-  PanelGroup,
-  PanelResizeHandle,
-} from 'react-resizable-panels';
 import dynamic from 'next/dynamic';
 import { useElementStore } from '@/store/index';
 import { Loader2 } from 'lucide-react';
 import StreetViewer from '@/components/overpass/StreetViewer';
 import { Button } from '@/components/ui/button';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '../ui/resizable';
+import { ImperativePanelHandle } from 'react-resizable-panels';
 
 const MapViewer = dynamic(() => import('@/components/overpass/MapViewer'), {
   ssr: false,
@@ -51,14 +51,19 @@ export default function Viewer() {
       </Button>
     </div>
   ) : (
-    <PanelGroup direction="vertical">
-      <Panel collapsible minSize={10} defaultSize={100}>
+    <ResizablePanelGroup direction="vertical">
+      <ResizablePanel collapsible minSize={10} defaultSize={100}>
         <StreetViewer toggleMapPanel={toggleMapPanel} />
-      </Panel>
-      <PanelResizeHandle />
-      <Panel collapsible minSize={10} defaultSize={0} ref={mapPanelRef}>
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel
+        collapsible
+        minSize={10}
+        defaultSize={0}
+        ref={mapPanelRef}
+      >
         <MapViewer />
-      </Panel>
-    </PanelGroup>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

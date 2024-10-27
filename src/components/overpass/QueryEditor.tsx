@@ -1,5 +1,3 @@
-'use client';
-
 import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -14,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { ThemeToggle } from '../ThemeToggle';
 
 export default function QueryEditor({
   className,
@@ -79,13 +78,16 @@ export default function QueryEditor({
 
   return (
     <div className={cn('flex h-full flex-col gap-2', className)} {...props}>
-      <div className="flex justify-between">
-        <Link href="/">
-          <Button variant="outline">
-            <ArrowLeft className="mr-2 size-4" />
-            Back
-          </Button>
-        </Link>
+      <div className="flex flex-wrap justify-between">
+        <div className="flex gap-2">
+          <Link href="/">
+            <Button variant="outline">
+              <ArrowLeft className="mr-2 size-4" />
+              Back
+            </Button>
+          </Link>
+          <ThemeToggle />
+        </div>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -113,7 +115,7 @@ export default function QueryEditor({
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <Button onClick={handleQuery}>
+      <Button onClick={handleQuery} variant="outline">
         {loadingQuery ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />
