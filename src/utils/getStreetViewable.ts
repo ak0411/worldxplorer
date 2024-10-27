@@ -1,6 +1,6 @@
-import { getRandomPointInCountry } from '@/app/api/randompoints/route';
 import getCountry from '@/utils/getCountry';
 import { loader } from '@/utils/googleMapsApiLoader';
+import { getRandomPointInCountry } from './getRandomPointInCountry';
 
 export async function getStreetViewable(
   lat: number,
