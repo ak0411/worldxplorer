@@ -18,36 +18,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useElementStore } from '@/store';
+import { useStore } from '@/store';
 
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
-];
-
-export function Combobox({ placeholder }: { placeholder: string }) {
-  const { elements, currentIndex, access } = useElementStore();
-
+export function LocationSelector() {
+  const { elements, currentIndex, access } = useStore();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<number>(currentIndex);
+
+  const placeholder = 'Select Location';
 
   React.useEffect(() => {
     setValue(currentIndex);
@@ -70,7 +48,7 @@ export function Combobox({ placeholder }: { placeholder: string }) {
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No location found.</CommandEmpty>
             <CommandGroup>
               {elements?.map((item, index) => (
                 <CommandItem

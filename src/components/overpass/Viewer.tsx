@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { useElementStore } from '@/store/index';
+import { useStore } from '@/store/index';
 import { Loader2 } from 'lucide-react';
 import StreetViewer from '@/components/overpass/StreetViewer';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ const MapViewer = dynamic(() => import('@/components/overpass/MapViewer'), {
 
 export default function Viewer() {
   const mapPanelRef = useRef<ImperativePanelHandle>(null);
-  const { loadingQuery } = useElementStore();
+  const { loadingQuery } = useStore();
 
   useEffect(() => {
     if (mapPanelRef.current) {

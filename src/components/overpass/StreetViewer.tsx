@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
-import { useElementStore, useStreetViewerStore } from '@/store/index';
+import { useStore } from '@/store/index';
 import {
   Select,
   SelectContent,
@@ -12,20 +12,23 @@ import {
 } from '@/components/ui/select';
 import GoogleButton from '@/components/shared/GoogleButton';
 import { loader } from '@/utils/googleMapsApiLoader';
-import { Combobox } from './Combobox';
+import { LocationSelector } from './LocationSelector';
 
 type StreetViewerProps = {
   toggleMapPanel: () => void;
 };
 
 export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
-  const { elements, currentIndex, prev, next, random } = useElementStore();
   const {
+    elements,
+    currentIndex,
     streetViewer,
-    setCurrentPlace,
     streetViewSource,
+    prev,
+    next,
+    random,
     setStreetViewSource,
-  } = useStreetViewerStore();
+  } = useStore();
 
   useEffect(() => {
     loader.importLibrary('streetView').then(() => {
@@ -36,15 +39,6 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
   const handleStreetViewSource = (source: string) => {
     setStreetViewSource(source as google.maps.StreetViewSource);
   };
-
-  useEffect(() => {
-    if (elements && elements.length > 0) {
-      setCurrentPlace({
-        lat: elements[currentIndex].lat,
-        lng: elements[currentIndex].lng,
-      });
-    }
-  }, [elements, currentIndex]);
 
   return (
     <div className="relative h-full w-full rounded bg-transparent">
@@ -81,7 +75,7 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
                 <GoogleButton onClick={random}>
                   <Dices />
                 </GoogleButton>
-                <Combobox placeholder="Select Location" />
+                <LocationSelector />
                 <GoogleButton onClick={toggleMapPanel}>
                   <Map />
                 </GoogleButton>

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Element } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { useElementStore } from '@/store/index';
+import { useStore } from '@/store/index';
 import Link from 'next/link';
 import {
   Tooltip,
@@ -19,9 +19,9 @@ export default function QueryEditor({
   ...props
 }: ComponentProps<'div'>) {
   const [value, setValue] = useState('');
-  const { loadingQuery, setLoadingQuery } = useElementStore();
+  const { loadingQuery, setLoadingQuery } = useStore();
 
-  const { fetchElements } = useElementStore();
+  const { fetchElements } = useStore();
 
   useEffect(() => {
     setValue(localStorage.getItem('queryValue') || '');

@@ -9,17 +9,10 @@ import {
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
-import { useElementStore, useStreetViewerStore } from '@/store/index';
+import { useStore } from '@/store/index';
 
 export default function MapViewer() {
-  const { elements, access } = useElementStore();
-  const { streetViewer, setCurrentPlace } = useStreetViewerStore();
-
-  useEffect(() => {
-    if (elements && elements.length > 0) {
-      setCurrentPlace({ lat: elements[0].lat, lng: elements[0].lng });
-    }
-  }, [elements]);
+  const { elements, streetViewer, access } = useStore();
 
   const zoom = 15;
 
@@ -79,21 +72,18 @@ export default function MapViewer() {
 
 function MapController() {
   const map = useMap();
-  const { elements, currentIndex } = useElementStore();
-  const { setStreetViewer, streetViewSource } = useStreetViewerStore();
+  const { elements, currentIndex, streetViewSource } = useStore();
 
   if (!elements) return null;
 
   // Recenter map
   useEffect(() => {
-    const center =
-      elements.length > 0
-        ? { lat: elements[currentIndex].lat, lng: elements[currentIndex].lng }
-        : { lat: 0, lng: 0 };
+    const center = elements[currentIndex]
+      ? { lat: elements[currentIndex].lat, lng: elements[currentIndex].lng }
+      : { lat: 0, lng: 0 };
 
     const currentZoom = map.getZoom();
     map.setView(center, currentZoom);
-    setStreetViewer(center);
   }, [elements, currentIndex, map, streetViewSource]);
 
   // Observe size changes
@@ -118,7 +108,7 @@ function MapController() {
 }
 
 const LocationFinder = () => {
-  const { setStreetViewer } = useStreetViewerStore();
+  const { setStreetViewer } = useStore();
   useMapEvents({
     click(e) {
       console.log(e.latlng);
