@@ -1,6 +1,5 @@
 'use client';
 
-import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Viewer from '@/components/overpass/Viewer';

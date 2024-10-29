@@ -8,7 +8,7 @@ type Store = {
   loadingQuery: boolean;
   streetViewer: google.maps.LatLngLiteral | null;
   streetViewSource: google.maps.StreetViewSource | null;
-  fetchElements: (elements: Element[]) => void;
+  setElements: (elements: Element[]) => void;
   prev: () => void;
   next: () => void;
   random: () => void;
@@ -24,7 +24,7 @@ export const useStore = create<Store>((set, get) => ({
   loadingQuery: false,
   streetViewer: null,
   streetViewSource: null,
-  fetchElements: (elements) =>
+  setElements: (elements) =>
     set((state) => {
       return {
         elements,

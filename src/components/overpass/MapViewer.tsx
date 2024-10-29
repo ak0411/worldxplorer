@@ -21,7 +21,7 @@ export default function MapViewer() {
       <MapContainer
         center={streetViewer || [0, 0]}
         zoom={zoom}
-        className="dark:filter-invert h-full w-full rounded-b"
+        className="dark:filter-invert z-0 h-full w-full rounded-b"
         minZoom={3}
       >
         <TileLayer

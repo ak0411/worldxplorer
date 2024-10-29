@@ -6,13 +6,8 @@ import { Element } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/store/index';
 import Link from 'next/link';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { ThemeToggle } from '../shared/ThemeToggle';
+import { Resources } from './Resources';
 
 export default function QueryEditor({
   className,
@@ -21,7 +16,7 @@ export default function QueryEditor({
   const [value, setValue] = useState('');
   const { loadingQuery, setLoadingQuery } = useStore();
 
-  const { fetchElements } = useStore();
+  const { setElements } = useStore();
 
   useEffect(() => {
     setValue(localStorage.getItem('queryValue') || '');
@@ -29,7 +24,7 @@ export default function QueryEditor({
 
   const handleQuery = useCallback(async () => {
     localStorage.setItem('queryValue', value);
-    const query = '[out:json][timeout:300];' + value;
+    const query = '[out:json][timeout:300];' + value + 'out center;';
     setLoadingQuery(true);
     try {
       const response = await fetch('https://overpass-api.de/api/interpreter', {
@@ -49,9 +44,10 @@ export default function QueryEditor({
           lat: element.type === 'way' ? element.center.lat : element.lat,
           lng: element.type === 'way' ? element.center.lon : element.lon,
         })) as Element[];
-      fetchElements(elements);
+      setElements(elements);
     } catch (error) {
       console.error('Error fetching Overpass data:', error);
+      setElements([]);
     } finally {
       setLoadingQuery(false);
     }
@@ -88,25 +84,7 @@ export default function QueryEditor({
           </Link>
           <ThemeToggle />
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="https://osm-queries.ldodds.com/tutorial/"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <Button variant="link">How to write Overpass QL query?</Button>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                More information about how to write Overpass queries can be
-                found in the link.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Resources />
       </div>
       <Textarea
         className="flex-grow bg-secondary p-2 text-lg"
