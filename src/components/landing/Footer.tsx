@@ -1,6 +1,7 @@
-import { Globe2, Github, Twitter } from 'lucide-react';
+import { Github, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggle } from '../shared/ThemeToggle';
+import { Logo } from '../shared/Logo';
 
 export default function Footer() {
   return (
@@ -10,7 +11,10 @@ export default function Footer() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Logo and Description */}
             <div className="space-y-3">
-              <span className="text-lg font-semibold">WorldXplorer</span>
+              <div className="flex items-center gap-2">
+                <Logo className="size-8" />
+                <span className="text-lg font-semibold">WorldXplorer</span>
+              </div>
               <p className="text-sm text-muted-foreground">
                 Explore the world from your browser through immersive Street
                 View experiences.

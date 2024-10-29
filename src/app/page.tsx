@@ -53,7 +53,6 @@ export default function Home() {
             ))}
           </div>
           <div className="mt-20 pb-20 text-center">
-            <h2 className="mb-8 text-2xl font-semibold">Why WorldXplorer?</h2>
             <div className="grid gap-8 sm:grid-cols-3">
               {features.map((feature) => (
                 <FeatureCard key={feature.title} {...feature} />
