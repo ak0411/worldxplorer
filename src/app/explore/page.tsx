@@ -86,10 +86,10 @@ export default function Explore() {
               <GoogleButton onClick={handleEnter}>
                 <Dices />
               </GoogleButton>
-              <GoogleButton>
+              <GoogleButton disabled>
                 <Camera className="size-4" />
               </GoogleButton>
-              <GoogleButton>
+              <GoogleButton disabled>
                 <Star className="size-4" />
               </GoogleButton>
             </div>
