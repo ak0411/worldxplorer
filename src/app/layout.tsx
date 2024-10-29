@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
-import appLogo from '@/public/logo.png';
+import globe from '@/public/logo.png';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -13,6 +13,11 @@ const geistMono = localFont({
   src: './fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
+});
+
+const mcFont = localFont({
+  src: './fonts/Minecraft.ttf',
+  variable: '--font-minecraft',
 });
 
 export const metadata: Metadata = {
@@ -30,7 +35,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head>
-          <link rel="icon" href={appLogo.src} />
+          <link rel="icon" href={globe.src} />
           <link
             rel="preconnect"
             href="https://maps.googleapis.com"
@@ -39,7 +44,7 @@ export default function RootLayout({
           <link rel="dns-prefetch" href="https://maps.googleapis.com" />
         </head>
         <body
-          className={`${geistSans.className} ${geistMono.className} antialiased`}
+          className={`${geistMono.className} ${mcFont.variable} antialiased`}
         >
           <ThemeProvider
             attribute="class"

@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { ThemeToggle } from '../ThemeToggle';
+import { ThemeToggle } from '../shared/ThemeToggle';
 
 export default function QueryEditor({
   className,

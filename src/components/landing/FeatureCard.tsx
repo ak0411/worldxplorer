@@ -16,8 +16,8 @@ export function FeatureCard({
       <div className="rounded-full bg-primary/10 p-3">
         <Icon className="h-6 w-6 text-primary" />
       </div>
-      <h3 className="font-medium">{title}</h3>
-      <p className="text-sm text-muted-foreground">{description}</p>
+      <h3 className="text-xl">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 }

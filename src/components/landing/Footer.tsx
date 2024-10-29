@@ -1,6 +1,6 @@
 import { Globe2, Github, Twitter } from 'lucide-react';
 import Link from 'next/link';
-import { ThemeToggle } from '../ThemeToggle';
+import { ThemeToggle } from '../shared/ThemeToggle';
 
 export default function Footer() {
   return (
