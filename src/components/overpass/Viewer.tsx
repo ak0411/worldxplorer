@@ -1,23 +1,20 @@
 import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useStore } from '@/store/index';
-import { Loader2 } from 'lucide-react';
 import StreetViewer from '@/components/overpass/StreetViewer';
-import { Button } from '@/components/ui/button';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '../ui/resizable';
 import { ImperativePanelHandle } from 'react-resizable-panels';
+import Loading from '../shared/Loading';
 
 const MapViewer = dynamic(() => import('@/components/overpass/MapViewer'), {
   ssr: false,
   loading: () => (
     <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-muted/30">
-      <div className="animate-pulse text-lg text-muted-foreground">
-        Loading map...
-      </div>
+      <Loading />
     </div>
   ),
 });
@@ -45,10 +42,7 @@ export default function Viewer() {
 
   return loadingQuery ? (
     <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
-      <Button disabled>
-        <Loader2 className="mr-2 size-4 animate-spin" />
-        Loading...
-      </Button>
+      <Loading />
     </div>
   ) : (
     <ResizablePanelGroup direction="vertical">

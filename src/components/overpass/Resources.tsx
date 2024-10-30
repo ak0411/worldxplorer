@@ -1,5 +1,3 @@
-import { Copy } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -58,7 +56,7 @@ export function Resources() {
                   href={item.link}
                   rel="noopener noreferrer"
                   target="_blank"
-                  className="text-blue-500 hover:underline"
+                  className="text-primary hover:underline"
                 >
                   {item.label}
                 </Link>

@@ -1,11 +1,11 @@
-import { Github, Twitter } from 'lucide-react';
 import Link from 'next/link';
-import { ThemeToggle } from '../shared/ThemeToggle';
-import { Logo } from '../shared/Logo';
+import { Logo } from '@/components/shared/Logo';
+import { metadata } from '@/app/layout';
+import { Github } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <footer className="border-t">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="py-8">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -13,15 +13,16 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Logo className="size-8" />
-                <span className="text-lg font-semibold">WorldXplorer</span>
+                <span className="font-pixelated tracking-widest">
+                  WorldXplorer
+                </span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Explore the world from your browser through immersive Street
-                View experiences.
+                {metadata.description}
               </p>
             </div>
             {/* Quick Links */}
-            <div>
+            <div className="flex-col items-center md:flex">
               <h3 className="mb-3 font-semibold">Quick Links</h3>
               <ul className="space-y-2 text-sm">
                 <li>
@@ -52,24 +53,14 @@ export default function Footer() {
             </div>
             {/* Social Links */}
             <div>
-              <div className="flex justify-between">
-                <h3 className="mb-3 font-semibold">Connect</h3>
-                <ThemeToggle />
-              </div>
+              <h3 className="mb-3 font-semibold">Social</h3>
               <div className="flex space-x-4">
                 <Link
-                  href="/"
+                  href="https://github.com/ak0411"
                   rel="noopener noreferrer"
                   className="text-muted-foreground transition-colors hover:text-primary"
                 >
-                  <Github className="h-5 w-5" />
-                </Link>
-                <Link
-                  href="/"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                >
-                  <Twitter className="h-5 w-5" />
+                  <Github />
                 </Link>
               </div>
             </div>

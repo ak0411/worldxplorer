@@ -90,7 +90,7 @@ export default function StreetViewer({ toggleMapPanel }: StreetViewerProps) {
                   }
                   onValueChange={handleStreetViewSource}
                 >
-                  <SelectTrigger className="mt-2 w-fit rounded-[2px] border-none bg-[#222]/80 text-white">
+                  <SelectTrigger className="mt-2 w-fit rounded-[2px] border-none bg-[#222]/80 font-semibold text-white">
                     <SelectValue placeholder="Select a Street View Source" />
                   </SelectTrigger>
                   <SelectContent className="rounded-[2px] border-none bg-[#222]/80 text-white">

@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, Star, Camera, Dices } from 'lucide-react';
+import { ArrowLeft, Star, Camera, Dices } from 'lucide-react';
 import getRandomStreetViewable from '@/utils/getStreetViewable';
 import {
   Select,
@@ -14,6 +13,7 @@ import {
 import countries from '@/public/countries.json';
 import Link from 'next/link';
 import GoogleButton from '@/components/shared/GoogleButton';
+import Loading from '@/components/shared/Loading';
 
 export default function Explore() {
   const [selectedCountry, setSelectedCountry] = useState('all');
@@ -69,10 +69,10 @@ export default function Explore() {
                 value={selectedCountry}
                 onValueChange={handleCountrySelect}
               >
-                <SelectTrigger className="w-[200px] rounded-[2px] border-none bg-primary/75 text-muted">
+                <SelectTrigger className="w-[200px] rounded-[2px] border-none bg-[#222]/80 font-semibold text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-[2px] border-none bg-primary/75 text-muted">
+                <SelectContent className="rounded-[2px] border-none bg-[#222]/80 font-semibold text-white">
                   <SelectItem value="all" defaultChecked>
                     Any country
                   </SelectItem>
@@ -96,10 +96,7 @@ export default function Explore() {
           </div>
         </>
       ) : (
-        <Button disabled>
-          <Loader2 className="mr-2 size-4 animate-spin" />
-          Loading...
-        </Button>
+        <Loading />
       )}
     </div>
   );

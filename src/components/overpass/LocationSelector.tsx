@@ -23,12 +23,16 @@ export function LocationSelector() {
         access(parseInt(currentValue));
       }}
     >
-      <SelectTrigger className="w-[100px]">
+      <SelectTrigger className="w-[100px] border-none bg-[#222]/80 font-semibold text-white">
         <SelectValue placeholder={currentIndex + 1}>
           {currentIndex + 1}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent side="top" align="center">
+      <SelectContent
+        side="top"
+        align="center"
+        className="border-none bg-[#222]/80 font-semibold text-white"
+      >
         <SelectGroup>
           <SelectLabel>Select Location</SelectLabel>
           <FixedSizeList
