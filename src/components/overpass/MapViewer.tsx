@@ -71,19 +71,20 @@ export default function MapViewer() {
 
 function MapController() {
   const map = useMap();
-  const { elements, currentIndex, streetViewSource } = useStore();
+  const { streetViewer, elements, currentIndex, streetViewSource } = useStore();
 
   if (!elements) return null;
 
   // Recenter map
   useEffect(() => {
-    const center = elements[currentIndex]
-      ? { lat: elements[currentIndex].lat, lng: elements[currentIndex].lng }
-      : { lat: 0, lng: 0 };
-
+    const center = streetViewer
+      ? { lat: streetViewer.lat, lng: streetViewer.lng }
+      : elements[currentIndex]
+        ? { lat: elements[currentIndex].lat, lng: elements[currentIndex].lng }
+        : { lat: 0, lng: 0 };
     const currentZoom = map.getZoom();
     map.setView(center, currentZoom);
-  }, [elements, currentIndex, map, streetViewSource]);
+  }, [streetViewer, elements, currentIndex, map, streetViewSource]);
 
   // Observe size changes
   useEffect(() => {
