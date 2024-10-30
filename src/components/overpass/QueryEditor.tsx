@@ -8,6 +8,7 @@ import { useStore } from '@/store/index';
 import Link from 'next/link';
 import { ThemeToggle } from '../shared/ThemeToggle';
 import { Resources } from './Resources';
+import { Examples } from './Examples';
 
 export default function QueryEditor({
   className,
@@ -84,7 +85,10 @@ export default function QueryEditor({
           </Link>
           <ThemeToggle />
         </div>
-        <Resources />
+        <div className="flex gap-2">
+          <Resources />
+          <Examples />
+        </div>
       </div>
       <Textarea
         className="flex-grow bg-secondary p-2 text-lg"

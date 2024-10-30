@@ -78,3 +78,13 @@
     height: 100%;
   }
 }
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.path-animation {
+  animation: dash 1.5s linear infinite;
+}

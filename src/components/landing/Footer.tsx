@@ -41,14 +41,6 @@ export default function Footer() {
                     Overpass Mode
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    About
-                  </Link>
-                </li>
               </ul>
             </div>
             {/* Social Links */}

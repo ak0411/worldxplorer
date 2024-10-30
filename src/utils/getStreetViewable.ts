@@ -67,7 +67,7 @@ async function generateValidLatLng(
   }
 
   const [lat, lng] = point;
-  console.log('Trying to get panorama for', lat, lng);
+  // console.log('Trying to get panorama for', lat, lng);
 
   return new Promise((resolve) => {
     loader.importLibrary('streetView').then(() => {
@@ -109,7 +109,7 @@ async function generateValidLatLng(
               });
             }
           } else {
-            console.log('Failed to get panorama', status, data);
+            // console.log('Failed to get panorama', status, data);
             resolve(null);
           }
         }

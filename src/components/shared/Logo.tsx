@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import globe from '@/public/logo.png';
+import globe from '@/public/assets/logo.png';
 
 interface LogoProps {
   className?: string;
@@ -7,13 +7,8 @@ interface LogoProps {
 
 export function Logo({ className = 'h-16 w-16' }: LogoProps) {
   return (
-    <div className={`relative ${className}`}>
-      <Image
-        src={globe}
-        alt="WorldXplorer Logo"
-        placeholder="blur"
-        blurDataURL=""
-      />
+    <div className={className}>
+      <Image src={globe} alt="WorldXplorer Logo" priority />
     </div>
   );
 }

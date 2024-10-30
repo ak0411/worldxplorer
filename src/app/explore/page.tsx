@@ -58,13 +58,16 @@ export default function Explore() {
             <iframe className="h-full w-full" src={streetViewUrl} />
           )}
           <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 transform">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Link href="/">
                 <GoogleButton>
                   <ArrowLeft className="mr-2 size-4" />
                   Back
                 </GoogleButton>
               </Link>
+              <GoogleButton onClick={handleEnter}>
+                <Dices />
+              </GoogleButton>
               <Select
                 value={selectedCountry}
                 onValueChange={handleCountrySelect}
@@ -83,9 +86,6 @@ export default function Explore() {
                   ))}
                 </SelectContent>
               </Select>
-              <GoogleButton onClick={handleEnter}>
-                <Dices />
-              </GoogleButton>
               <GoogleButton disabled>
                 <Camera className="size-4" />
               </GoogleButton>

@@ -6,10 +6,19 @@ import {
   Popup,
   useMap,
   useMapEvents,
+  Marker,
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import { useStore } from '@/store/index';
+import L from 'leaflet';
+import customMarker from '@/public/assets/marker.png';
+
+const markerIcon = new L.Icon({
+  iconUrl: customMarker.src,
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
 
 export default function MapViewer() {
   const { elements, streetViewer, access } = useStore();
@@ -21,24 +30,14 @@ export default function MapViewer() {
       <MapContainer
         center={streetViewer || [0, 0]}
         zoom={zoom}
-        className="dark:filter-invert z-0 h-full w-full rounded-b"
+        className="z-0 h-full w-full rounded-b"
         minZoom={3}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {streetViewer && (
-          <CircleMarker
-            center={streetViewer}
-            radius={5}
-            fillColor="#ff3333"
-            color="#ff3333"
-            weight={1}
-            opacity={0.8}
-            fillOpacity={0.8}
-          />
-        )}
+        {streetViewer && <Marker position={streetViewer} icon={markerIcon} />}
         <MarkerClusterGroup
           chunkedLoading
           maxClusterRadius={50}
