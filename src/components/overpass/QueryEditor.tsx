@@ -128,7 +128,12 @@ export default function QueryEditor({
         onKeyDown={handleKeyDown}
       />
       <div className="flex gap-2">
-        <Button onClick={handleQuery} variant="outline" className="flex-grow">
+        <Button
+          onClick={handleQuery}
+          variant="outline"
+          className="flex-grow"
+          disabled={loadingQuery}
+        >
           {loadingQuery ? (
             <>
               <Loader2 className="mr-2 size-4 animate-spin" />
