@@ -105,7 +105,7 @@ export default function QueryEditor({
 
   return (
     <div className={cn('flex h-full flex-col gap-2', className)} {...props}>
-      <div className="flex flex-wrap justify-between">
+      <div className="flex flex-wrap justify-between gap-2">
         <div className="flex gap-2">
           <Link href="/">
             <Button variant="outline">
@@ -115,7 +115,7 @@ export default function QueryEditor({
           </Link>
           <ThemeToggle />
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Resources />
           <Examples />
         </div>

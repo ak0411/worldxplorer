@@ -29,7 +29,7 @@ export default function Overpass() {
           <QueryEditor />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel minSize={30} defaultSize={70}>
+        <ResizablePanel collapsible minSize={30} defaultSize={70}>
           <Viewer />
         </ResizablePanel>
       </ResizablePanelGroup>

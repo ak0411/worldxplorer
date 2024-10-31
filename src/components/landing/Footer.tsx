@@ -43,12 +43,13 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-            {/* Social Links */}
+            {/* Source Code */}
             <div>
-              <h3 className="mb-3 font-semibold">Social</h3>
+              <h3 className="mb-3 font-semibold">Source code</h3>
               <div className="flex space-x-4">
                 <Link
-                  href="https://github.com/ak0411"
+                  href="https://github.com/ak0411/worldxplorer"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground transition-colors hover:text-primary"
                 >
