@@ -3,6 +3,8 @@ import { ModeCard } from '@/components/landing/ModeCard';
 import Footer from '@/components/landing/Footer';
 import Hero from '@/components/landing/Hero';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import worldMap from '@/public/assets/world_map.svg';
+import Image from 'next/image';
 
 const modes = [
   {
@@ -26,7 +28,13 @@ const modes = [
 export default function Home() {
   return (
     <>
-      <main className="bg-secondary">
+      <main className="relative bg-secondary pb-8">
+        <Image
+          priority
+          src={worldMap}
+          alt="world map"
+          className="absolute left-1/2 -translate-x-1/2 px-4 opacity-20"
+        />
         <div className="container mx-auto flex justify-end pt-4">
           <ThemeToggle />
         </div>
@@ -38,7 +46,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div className="p-4">
+        <div className="hidden px-4 2xl:block">
           <svg className="h-[100px] w-full md:h-[200px]" viewBox="0 0 1600 100">
             <path
               d="M 0 50 C 200 0 200 0 400 50 C 650 100 650 100 800 50 C 1000 0 1000 0 1200 50 C 1400 100 1400 100 1600 50"

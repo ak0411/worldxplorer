@@ -78,7 +78,7 @@ export const useStore = create<Store>((set, get) => ({
     }),
   access: (index) =>
     set((state) => {
-      if (state.elements) {
+      if (state.elements && index != state.currentIndex) {
         const newIndex = index % state.elements.length;
         get().setStreetViewer({
           lat: state.elements[newIndex].lat,

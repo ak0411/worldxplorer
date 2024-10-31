@@ -24,12 +24,6 @@ const MapViewer = () => {
   const { elements, streetViewer, access, currentIndex } = useStore();
   const zoom = 15;
 
-  const handleMarkerClick = (idx: number) => () => {
-    if (idx !== currentIndex) {
-      access(idx);
-    }
-  };
-
   return (
     elements && (
       <MapContainer
@@ -61,7 +55,7 @@ const MapViewer = () => {
                 opacity={0.8}
                 fillOpacity={0.8}
                 eventHandlers={{
-                  click: handleMarkerClick(idx),
+                  click: () => access(idx),
                 }}
               >
                 <Popup>
