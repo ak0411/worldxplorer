@@ -20,10 +20,15 @@ const markerIcon = new L.Icon({
   iconAnchor: [16, 16],
 });
 
-export default function MapViewer() {
-  const { elements, streetViewer, access } = useStore();
-
+const MapViewer = () => {
+  const { elements, streetViewer, access, currentIndex } = useStore();
   const zoom = 15;
+
+  const handleMarkerClick = (idx: number) => () => {
+    if (idx !== currentIndex) {
+      access(idx);
+    }
+  };
 
   return (
     elements && (
@@ -38,36 +43,49 @@ export default function MapViewer() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {streetViewer && <Marker position={streetViewer} icon={markerIcon} />}
-        <MarkerClusterGroup
-          chunkedLoading
-          maxClusterRadius={50}
-          spiderfyOnMaxZoom={false}
-          disableClusteringAtZoom={16}
-        >
-          {elements.map((point, idx) => (
-            <CircleMarker
-              key={point.id}
-              center={{ lat: point.lat, lng: point.lng }}
-              radius={5}
-              fillColor="#3388ff"
-              color="#3388ff"
-              weight={1}
-              opacity={0.8}
-              fillOpacity={0.8}
-              eventHandlers={{
-                click: () => access(idx),
-              }}
-            >
-              <Popup>Location #{idx + 1}</Popup>
-            </CircleMarker>
-          ))}
-        </MarkerClusterGroup>
+        {elements.length > 0 && (
+          <MarkerClusterGroup
+            chunkedLoading
+            maxClusterRadius={50}
+            spiderfyOnMaxZoom={false}
+            disableClusteringAtZoom={16}
+          >
+            {elements.map((point, idx) => (
+              <CircleMarker
+                key={point.id}
+                center={{ lat: point.lat, lng: point.lng }}
+                radius={5}
+                fillColor="#3388ff"
+                color="#3388ff"
+                weight={1}
+                opacity={0.8}
+                fillOpacity={0.8}
+                eventHandlers={{
+                  click: handleMarkerClick(idx),
+                }}
+              >
+                <Popup>
+                  <div className="space-y-2">
+                    <strong className="underline">Location #{idx + 1}</strong>
+                    <ul>
+                      {Object.entries(point.tags).map(([key, value]) => (
+                        <li key={key}>
+                          <strong>[{key}]</strong> {value}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Popup>
+              </CircleMarker>
+            ))}
+          </MarkerClusterGroup>
+        )}
         <MapController />
         <LocationFinder />
       </MapContainer>
     )
   );
-}
+};
 
 function MapController() {
   const map = useMap();
@@ -117,3 +135,5 @@ const LocationFinder = () => {
   });
   return null;
 };
+
+export default MapViewer;

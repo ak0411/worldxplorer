@@ -27,30 +27,40 @@ export function Examples() {
         <div className="flex flex-col gap-4">
           <div className="space-y-1">
             <p>
-              <b>Example 1:</b> "Shrines in Japan"
+              <b>Example 1:</b> "Shrines in Japan."
             </p>
             <pre className="rounded-[2px] bg-secondary p-2">
               <code>
                 area["ISO3166-1"="JP"];
                 <br />
-                nwr[building=shrine](area);
+                nwr["building"="shrine"](area);
               </code>
             </pre>
           </div>
           <div className="space-y-1">
             <p>
-              <b>Example 2:</b> "Find schools and universities in a specific
-              city (e.g., Berlin)."
+              <b>Example 2:</b> "Parks in Thailand with English names."
             </p>
             <pre className="rounded-[2px] bg-secondary p-2">
               <code>
-                area["addr:city"="Berlin"];
+                area["ISO3166-1"="TH"];
                 <br />
-                {'('}
-                <br /> node["amenity"="school"](area);
-                <br /> node["amenity"="university"](area);
+                nwr["leisure"="park"]["name:en"](area);
+              </code>
+            </pre>
+          </div>
+          <div className="space-y-1">
+            <p>
+              <b>Example 2:</b> "Viewpoints in Sweden within 50m to a
+              coastline."
+            </p>
+            <pre className="rounded-[2px] bg-secondary p-2">
+              <code>
+                area["ISO3166-1"="SE"];
                 <br />
-                {')'};
+                way(area)["natural"="coastline"];
+                <br />
+                node(around:50)["tourism"="viewpoint"];
               </code>
             </pre>
           </div>
