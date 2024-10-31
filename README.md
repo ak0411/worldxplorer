@@ -15,6 +15,7 @@ Visit the live app at: https://worldxplorer.vercel.app/.
 - **Zustand**: Simple, lightweight state management for React.
 - **Google Maps Embed API**: Powers Street View.
 - **React Leaflet**: Enables map interactivity for dynamic and detailed map exploration.
+- **Overpass API**: Fetches specific location data based on custom Overpass QL queries.
 
 ## Run Locally
 
