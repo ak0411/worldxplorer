@@ -38,10 +38,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div className="relative mx-auto h-[200px] w-full">
-          <svg className="absolute h-full w-full">
+        <div className="p-4">
+          <svg className="h-[100px] w-full md:h-[200px]" viewBox="0 0 1600 100">
             <path
-              d="M 50 100 C 250 150 250 150 450 100 C 650 50 650 50 850 100 C 1050 150 1050 150 1250 100 C 1450 50 1450 50 1650 100 L 1850 150 "
+              d="M 0 50 C 200 0 200 0 400 50 C 650 100 650 100 800 50 C 1000 0 1000 0 1200 50 C 1400 100 1400 100 1600 50"
               fill="none"
               stroke="#CBD5E1"
               strokeWidth="4"
@@ -49,12 +49,6 @@ export default function Home() {
               className="path-animation"
             />
           </svg>
-          <div className="absolute left-[25px] top-[75px] rounded-full bg-emerald-500 p-3 shadow-lg">
-            <MapPin className="h-6 w-6 text-white" />
-          </div>
-          <div className="absolute left-[1825px] top-[125px] rounded-full bg-rose-500 p-3 shadow-lg">
-            <Navigation className="h-6 w-6 text-white" />
-          </div>
         </div>
       </main>
       <Footer />
