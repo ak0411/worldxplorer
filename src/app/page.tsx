@@ -1,4 +1,4 @@
-import { Map, MapPin, Navigation, Navigation2 } from 'lucide-react';
+import { Map, Navigation2 } from 'lucide-react';
 import { ModeCard } from '@/components/landing/ModeCard';
 import Footer from '@/components/landing/Footer';
 import Hero from '@/components/landing/Hero';

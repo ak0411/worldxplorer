@@ -5,7 +5,7 @@ import { getRandomPointInCountry } from './getRandomPointInCountry';
 export async function getStreetViewable(
   lat: number,
   lng: number,
-  source: google.maps.StreetViewSource | null
+  source?: google.maps.StreetViewSource
 ): Promise<google.maps.LatLngLiteral | null> {
   return new Promise((resolve) => {
     loader.importLibrary('streetView').then(() => {
