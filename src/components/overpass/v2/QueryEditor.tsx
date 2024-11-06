@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useTransition } from 'react';
+import { useEffect, useRef, useTransition } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -15,7 +15,6 @@ import { useFormState, useFormStatus } from 'react-dom';
 
 type QueryEditorProps = {
   setElements: (elements: Element[]) => void;
-  initialQuery: string;
 };
 
 function SubmitButton({ disabled }: { disabled?: boolean }) {
@@ -39,47 +38,40 @@ const initialState = {
   elements: [],
 };
 
-export default function QueryEditor({
-  setElements,
-  initialQuery,
-}: QueryEditorProps) {
+export default function QueryEditor({ setElements }: QueryEditorProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [state, formAction] = useFormState(getElements, initialState);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (state.elements) {
-      setElements(state.elements);
-    }
-  }, [state.elements, setElements]);
+  const encodedQuery = searchParams.get('encodedQuery');
 
   useEffect(() => {
-    if (initialQuery) {
+    if (encodedQuery) {
       startTransition(() => {
         const formData = new FormData();
-        formData.set('query', initialQuery);
+        formData.set('query', decodeURIComponent(encodedQuery));
         formAction(formData);
       });
     }
   }, []);
 
+  useEffect(() => {
+    setElements(state.elements);
+  }, [state.elements]);
+
   const handleFormAction = async (formData: FormData) => {
     const params = new URLSearchParams(searchParams.toString());
     const query = formData.get('query') as string;
-
     if (!query.trim()) {
       router.replace('/overpass/v2');
       setElements([]);
-      return;
+    } else {
+      params.set('encodedQuery', encodeURIComponent(query));
+      params.set('index', '0');
+      router.replace(`?${params.toString()}`, { scroll: false });
+      formAction(formData);
     }
-
-    params.set('query', encodeURIComponent(query));
-    params.set('index', '0');
-    params.delete('pos');
-    router.push(`?${params.toString()}`, { scroll: false });
-
-    formAction(formData);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -123,7 +115,7 @@ export default function QueryEditor({
           className="flex-grow bg-secondary p-2 text-lg focus-visible:ring-transparent"
           placeholder="Enter your query here..."
           onKeyDown={handleKeyDown}
-          defaultValue={initialQuery}
+          defaultValue={decodeURIComponent(encodedQuery ?? '')}
           name="query"
           disabled={isPending}
         />

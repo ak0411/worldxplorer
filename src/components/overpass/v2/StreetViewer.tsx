@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Dices, Map } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Dices } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -13,22 +13,46 @@ import { Element } from '@/lib/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { LocationSelector } from './LocationSelector';
+import { useEffect } from 'react';
+import { getStreetViewable } from '@/utils/getStreetViewable';
 
 type StreetViewerProps = {
   elements: Element[];
-  index: number;
-  streetViewSource: google.maps.StreetViewSource;
-  pos: string | null;
 };
 
-export default function StreetViewer({
-  elements,
-  index,
-  streetViewSource,
-  pos,
-}: StreetViewerProps) {
+export default function StreetViewer({ elements }: StreetViewerProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const index = parseInt(searchParams.get('index') ?? '0');
+  const streetViewSource = (searchParams.get('streetViewSource') ??
+    'default') as google.maps.StreetViewSource;
+  const pos = searchParams.get('pos');
+
+  useEffect(() => {
+    if (elements.length > 0) {
+      const updatePosition = async () => {
+        const validPos = await getStreetViewable(
+          elements[index].lat,
+          elements[index].lng,
+          streetViewSource
+        );
+
+        const params = new URLSearchParams(searchParams.toString());
+        if (validPos) {
+          const posString = `${validPos.lat},${validPos.lng}`;
+          params.set('pos', posString);
+          params.set('index', index.toString());
+          params.set('streetViewSource', streetViewSource);
+        } else {
+          params.delete('pos');
+        }
+        router.replace(`?${params.toString()}`, { scroll: false });
+      };
+
+      updatePosition();
+    }
+  }, [elements, index, streetViewSource, pos]);
 
   const setIndexQueryString = (newIndex: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -77,10 +101,8 @@ export default function StreetViewer({
           )}
           <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-2">
             <Link
-              href={`?${setIndexQueryString(Math.max(0, index - 1))}`}
+              href={`?${setIndexQueryString((elements.length + index - 1) % elements.length)}`}
               scroll={false}
-              aria-disabled={index === 0}
-              className={index === 0 ? 'pointer-events-none opacity-50' : ''}
             >
               <GoogleButton>
                 <ChevronLeft />
@@ -97,14 +119,8 @@ export default function StreetViewer({
             </Link>
             <LocationSelector elements={elements} index={index} />
             <Link
-              href={`?${setIndexQueryString(Math.min(elements.length - 1, index + 1))}`}
+              href={`?${setIndexQueryString((elements.length + index + 1) % elements.length)}`}
               scroll={false}
-              aria-disabled={index === elements.length - 1}
-              className={
-                index === elements.length - 1
-                  ? 'pointer-events-none opacity-50'
-                  : ''
-              }
             >
               <GoogleButton>
                 <ChevronRight />
