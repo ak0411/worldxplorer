@@ -64,18 +64,22 @@ export default function QueryEditor({
     }
   }, []);
 
-  const handleFormAction = (formData: FormData) => {
-    setElements([]);
+  const handleFormAction = async (formData: FormData) => {
     const params = new URLSearchParams(searchParams.toString());
     const query = formData.get('query') as string;
+
     if (!query.trim()) {
       router.replace('/overpass/v2');
-    } else {
-      formAction(formData);
-      params.set('query', encodeURIComponent(query));
-      params.set('index', '0');
-      router.push(`?${params.toString()}`, { scroll: false });
+      setElements([]);
+      return;
     }
+
+    params.set('query', encodeURIComponent(query));
+    params.set('index', '0');
+    params.delete('pos');
+    router.push(`?${params.toString()}`, { scroll: false });
+
+    formAction(formData);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

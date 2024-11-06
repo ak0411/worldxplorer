@@ -10,24 +10,35 @@ import {
 import { Element } from '@/lib/types';
 import { getStreetViewable } from '@/utils/getStreetViewable';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 export default function Overpass() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [elements, setElements] = useState<Element[]>([]);
+
+  // Parse URL parameters
   const query = decodeURIComponent(searchParams.get('query') ?? '');
   const index = parseInt(searchParams.get('index') ?? '0');
   const streetViewSource = (searchParams.get('streetViewSource') ??
     'default') as google.maps.StreetViewSource;
   const pos = searchParams.get('pos');
 
-  const [elements, setElements] = useState<Element[]>([]);
+  const updatePosition = useCallback(
+    async (elementIndex: number) => {
+      if (elements.length === 0) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete('pos');
+        router.replace(`?${params.toString()}`, { scroll: false });
+        return;
+      }
 
-  const updatePosition = async (elementIndex: number) => {
-    if (elements.length > 0) {
+      const element = elements[elementIndex];
+      if (!element) return;
+
       const validPos = await getStreetViewable(
-        elements[elementIndex].lat,
-        elements[elementIndex].lng,
+        element.lat,
+        element.lng,
         streetViewSource
       );
 
@@ -35,22 +46,23 @@ export default function Overpass() {
       if (validPos) {
         const posString = `${validPos.lat},${validPos.lng}`;
         params.set('index', elementIndex.toString());
-        params.set('streetViewSource', streetViewSource as string);
-        params.set('pos', posString as string);
+        params.set('streetViewSource', streetViewSource);
+        params.set('pos', posString);
       } else {
         params.delete('pos');
       }
-      router.push(`?${params.toString()}`, { scroll: false });
-    }
-  };
+
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [elements, streetViewSource, router, searchParams]
+  );
 
   useEffect(() => {
-    if (elements[index]) {
-      updatePosition(index);
-    } else if (elements.length > 0) {
-      updatePosition(0);
-    }
-  }, [index, streetViewSource, elements]);
+    if (elements.length === 0) return;
+
+    const targetIndex = elements[index] ? index : 0;
+    updatePosition(targetIndex);
+  }, [index, streetViewSource, elements, updatePosition]);
 
   return (
     <div className="h-screen p-2">
