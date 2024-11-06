@@ -12,7 +12,7 @@ import GoogleButton from '@/components/shared/GoogleButton';
 import { Element } from '@/lib/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { LocationSelector } from './LocationSelector';
+import { LocationSelector } from './location-selector';
 import { useEffect } from 'react';
 import { getStreetViewable } from '@/utils/getStreetViewable';
 
@@ -26,7 +26,7 @@ export default function StreetViewer({ elements }: StreetViewerProps) {
 
   const index = parseInt(searchParams.get('index') ?? '0');
   const streetViewSource = (searchParams.get('streetViewSource') ??
-    'default') as google.maps.StreetViewSource;
+    google.maps.StreetViewSource.DEFAULT) as google.maps.StreetViewSource;
   const pos = searchParams.get('pos');
 
   useEffect(() => {
@@ -81,66 +81,73 @@ export default function StreetViewer({ elements }: StreetViewerProps) {
         </div>
       ) : (
         <>
-          <div className="absolute bottom-2 left-2 rounded bg-[#222]/80 p-2 text-xs text-green-500">
+          {/* <div className="absolute bottom-2 left-2 rounded bg-[#222]/80 p-2 text-xs text-green-500">
             <p>Total Locations: {elements.length}</p>
             <p>Current Location: {index + 1}</p>
-          </div>
+          </div> */}
           {pos ? (
-            <iframe
-              width="100%"
-              height="100%"
-              loading="lazy"
-              allowFullScreen
-              className="rounded"
-              src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${pos}&fov=100`}
-            />
+            <>
+              <iframe
+                width="100%"
+                height="100%"
+                loading="lazy"
+                allowFullScreen={false}
+                className="relative rounded"
+                src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${pos}&fov=100`}
+              />
+              <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-2">
+                <Link
+                  href={`?${setIndexQueryString((elements.length + index - 1) % elements.length)}`}
+                  scroll={false}
+                >
+                  <GoogleButton>
+                    <ChevronLeft />
+                  </GoogleButton>
+                </Link>
+                <Link
+                  href={`?${setIndexQueryString(getRandomIndex())}`}
+                  scroll={false}
+                >
+                  <GoogleButton>
+                    <Dices />
+                  </GoogleButton>
+                </Link>
+                <LocationSelector elements={elements} index={index} />
+                <Link
+                  href={`?${setIndexQueryString((elements.length + index + 1) % elements.length)}`}
+                  scroll={false}
+                >
+                  <GoogleButton>
+                    <ChevronRight />
+                  </GoogleButton>
+                </Link>
+              </div>
+            </>
           ) : (
             <div className="flex h-full items-center justify-center bg-transparent">
               <p className="text-xl">Unable to view the location...</p>
             </div>
           )}
-          <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-2">
-            <Link
-              href={`?${setIndexQueryString((elements.length + index - 1) % elements.length)}`}
-              scroll={false}
-            >
-              <GoogleButton>
-                <ChevronLeft />
-              </GoogleButton>
-            </Link>
-
-            <Link
-              href={`?${setIndexQueryString(getRandomIndex())}`}
-              scroll={false}
-            >
-              <GoogleButton>
-                <Dices />
-              </GoogleButton>
-            </Link>
-            <LocationSelector elements={elements} index={index} />
-            <Link
-              href={`?${setIndexQueryString((elements.length + index + 1) % elements.length)}`}
-              scroll={false}
-            >
-              <GoogleButton>
-                <ChevronRight />
-              </GoogleButton>
-            </Link>
-          </div>
           <div className="absolute left-0 top-0 flex w-full justify-center">
             <Select
               value={streetViewSource}
               onValueChange={handleStreetViewSource}
             >
-              <SelectTrigger className="mt-2 w-fit rounded-[2px] border-none bg-[#222]/80 font-semibold text-white">
+              <SelectTrigger className="mt-2 w-fit rounded-[2px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
                 <SelectValue placeholder="Select a Street View Source" />
               </SelectTrigger>
               <SelectContent className="rounded-[2px] border-none bg-[#222]/80 text-white">
                 <SelectGroup>
                   <SelectLabel>Street View Source</SelectLabel>
-                  <SelectItem value={'default'}>Default</SelectItem>
-                  <SelectItem value={'google'}>Google</SelectItem>
-                  <SelectItem value={'outdoor'}>Outdoor</SelectItem>
+                  <SelectItem value={google.maps.StreetViewSource.DEFAULT}>
+                    Default
+                  </SelectItem>
+                  <SelectItem value={google.maps.StreetViewSource.GOOGLE}>
+                    Google
+                  </SelectItem>
+                  <SelectItem value={google.maps.StreetViewSource.OUTDOOR}>
+                    Outdoor
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

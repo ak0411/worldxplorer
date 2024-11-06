@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { Resources } from '@/components/overpass/Resources';
 import { Examples } from '@/components/overpass/Examples';
-import { getElements } from '@/app/overpass/actions';
+import { getElements } from '@/app/(modes)/overpass/actions';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useFormState, useFormStatus } from 'react-dom';
 

@@ -1,7 +1,7 @@
 'use client';
 
-import QueryEditor from '@/components/overpass/v2/QueryEditor';
-import StreetViewer from '@/components/overpass/v2/StreetViewer';
+import QueryEditor from '@/components/overpass/v2/query-editor';
+import StreetViewer from '@/components/overpass/v2/streetviewer';
 import {
   ResizableHandle,
   ResizablePanel,

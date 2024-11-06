@@ -30,7 +30,7 @@ export function LocationSelector({ elements, index }: LocationSelectorProps) {
   const itemCount = elements ? elements.length : 0;
   return (
     <Select onValueChange={handleValueChange}>
-      <SelectTrigger className="w-[100px] border-none bg-[#222]/80 font-semibold text-white">
+      <SelectTrigger className="w-[100px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
         <SelectValue placeholder={index + 1}>{index + 1}</SelectValue>
       </SelectTrigger>
       <SelectContent
