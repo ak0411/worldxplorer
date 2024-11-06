@@ -9,17 +9,15 @@ type State = {
 
 export async function getElements(
   prevState: State,
-  formData: FormData,
-  signal?: AbortSignal
+  formData: FormData
 ): Promise<State> {
   try {
+    const query =
+      '[out:json][timeout:300];\n' + formData.get('query') + '\nout center;';
+    console.info(query);
     const response = await fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
-      body:
-        'data=' +
-        encodeURIComponent(
-          '[out:json][timeout:300];' + formData.get('query') + 'out center;'
-        ),
+      body: 'data=' + encodeURIComponent(query),
     });
 
     if (!response.ok) {
@@ -50,7 +48,24 @@ export async function getElements(
       };
     }
 
-    const data = await response.json();
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      return {
+        error: `Failed to parse API response: ${parseError instanceof Error ? parseError.message : 'Unknown parsing error'}. Response: ${responseText.substring(0, 200)}...`,
+        elements: prevState.elements,
+      };
+    }
+
+    if (!data?.elements) {
+      return {
+        error: 'Invalid API response format: missing elements array',
+        elements: prevState.elements,
+      };
+    }
+
     const elements = data.elements
       .filter(
         (element: any) => element.type === 'node' || element.type === 'way'

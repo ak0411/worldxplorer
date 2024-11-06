@@ -12,6 +12,7 @@ import GoogleButton from '@/components/shared/GoogleButton';
 import { Element } from '@/lib/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { LocationSelector } from './LocationSelector';
 
 type StreetViewerProps = {
   elements: Element[];
@@ -98,7 +99,7 @@ export default function StreetViewer({
                     <Dices />
                   </GoogleButton>
                 </Link>
-
+                <LocationSelector elements={elements} index={index} />
                 <Link
                   href={`?${setIndexQueryString(Math.min(elements.length - 1, index + 1))}`}
                   scroll={false}
