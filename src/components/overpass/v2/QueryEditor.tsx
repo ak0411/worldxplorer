@@ -65,11 +65,11 @@ export default function QueryEditor({
   }, []);
 
   const handleFormAction = (formData: FormData) => {
+    setElements([]);
     const params = new URLSearchParams(searchParams.toString());
     const query = formData.get('query') as string;
     if (!query.trim()) {
       router.replace('/overpass/v2');
-      setElements([]);
     } else {
       formAction(formData);
       params.set('query', encodeURIComponent(query));
