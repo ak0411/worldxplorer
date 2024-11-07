@@ -1,6 +1,7 @@
 'use client';
 
 import { MapComponent } from '@/components/overpass/v2/map';
+import MapPanorama from '@/components/overpass/v2/map-panorama';
 import QueryEditor from '@/components/overpass/v2/query-editor';
 import StreetViewer from '@/components/overpass/v2/streetviewer';
 import {
@@ -23,7 +24,8 @@ export default function Overpass() {
         <ResizableHandle withHandle />
         <ResizablePanel minSize={20} defaultSize={70}>
           {/* <StreetViewer elements={elements} /> */}
-          <MapComponent elements={elements} />
+          {/* <MapComponent elements={elements} /> */}
+          <MapPanorama elements={elements} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

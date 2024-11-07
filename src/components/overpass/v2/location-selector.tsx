@@ -29,9 +29,11 @@ export function LocationSelector({ elements, index }: LocationSelectorProps) {
   const itemSize = 35;
   const itemCount = elements ? elements.length : 0;
   return (
-    <Select onValueChange={handleValueChange}>
+    <Select onValueChange={handleValueChange} value={index.toString()}>
       <SelectTrigger className="w-[100px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
-        <SelectValue placeholder={index}>{index}</SelectValue>
+        <SelectValue>
+          {elements[index] ? index : 'Select by Location Index'}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent
         side="top"

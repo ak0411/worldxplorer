@@ -94,12 +94,6 @@ const MapComponent = ({ elements }: MapComponentProps) => {
       : randomIndex;
   };
 
-  const handleOnLoad = (map: google.maps.Map) => {
-    const bounds = new google.maps.LatLngBounds();
-    elements.forEach(({ lat, lng }) => bounds.extend({ lat, lng }));
-    map.fitBounds(bounds);
-  };
-
   const handleActiveMarker = (marker: number, newIndex: number) => {
     if (marker === activeMarker) {
       return;
@@ -116,11 +110,10 @@ const MapComponent = ({ elements }: MapComponentProps) => {
   if (elements.length === 0) return <></>;
 
   const poi = { lat: elements[index].lat, lng: elements[index].lng };
+
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       <GoogleMap
-        /* onLoad={handleOnLoad}
-        key={elements[0].id && elements.length} */
         mapContainerStyle={{ width: '100%', height: '100%' }}
         onClick={() => setActiveMarker(null)}
         center={poi}
@@ -160,38 +153,7 @@ const MapComponent = ({ elements }: MapComponentProps) => {
             </div>
           )}
         </MarkerClusterer>
-        {/* {latLng ? (
-          <StreetViewPanorama
-            options={{
-              imageDateControl: true,
-              fullscreenControl: false,
-              showRoadLabels: false,
-              visible: true,
-              position: latLng,
-              pov: {
-                heading: 0,
-                pitch: 0,
-              },
-            }}
-          />
-        ) : (
-          <p>No Street View available</p>
-        )} */}
       </GoogleMap>
-      {/*################## Mini Map ##################*/}
-      {/* <div className="absolute bottom-[25px] left-[25px] z-50 h-[250px] w-[250px]">
-        <GoogleMap
-          center={poi}
-          zoom={10}
-          mapContainerStyle={{ width: '100%', height: '100%' }}
-          options={{
-            disableDefaultUI: true,
-          }}
-        >
-          <Marker position={poi} />
-        </GoogleMap>
-      </div> */}
-      {/* Controllers */}
       <div className="absolute bottom-[25px] left-1/2 z-50 flex -translate-x-1/2 gap-2">
         <Link
           href={`?${setIndexQueryString((elements.length + index - 1) % elements.length)}`}
