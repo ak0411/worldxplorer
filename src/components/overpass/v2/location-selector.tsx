@@ -23,7 +23,7 @@ export function LocationSelector({ elements, index }: LocationSelectorProps) {
   const handleValueChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('index', value);
-    router.push(`?${params.toString()}`);
+    router.replace(`?${params.toString()}`);
   };
 
   const itemSize = 35;
@@ -36,7 +36,7 @@ export function LocationSelector({ elements, index }: LocationSelectorProps) {
       <SelectContent
         side="top"
         align="center"
-        className="border-none bg-[#222]/80 font-semibold text-white"
+        className="border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent"
       >
         <SelectGroup>
           <SelectLabel>Select Location</SelectLabel>
