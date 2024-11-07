@@ -3,11 +3,17 @@
 import GoogleButton from '@/components/shared/GoogleButton';
 import { Element } from '@/lib/types';
 import { getStreetViewable } from '@/utils/getStreetViewable';
-import { GoogleMap, Marker, StreetViewPanorama } from '@react-google-maps/api';
+import {
+  GoogleMap,
+  InfoWindow,
+  Marker,
+  MarkerClusterer,
+  StreetViewPanorama,
+} from '@react-google-maps/api';
 import { ChevronLeft, ChevronRight, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { LocationSelector } from './location-selector';
 import {
   Select,
@@ -23,11 +29,6 @@ type MapComponentProps = {
   elements: Element[];
 };
 
-export const defaultMapContainerStyle = {
-  width: '100%',
-  height: '100%',
-};
-
 const convertPosToLatLngLiteral = (pos: string | null) => {
   if (!pos) return null;
 
@@ -39,6 +40,8 @@ const convertPosToLatLngLiteral = (pos: string | null) => {
 };
 
 const MapComponent = ({ elements }: MapComponentProps) => {
+  const [activeMarker, setActiveMarker] = useState<number | null>(null);
+
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -91,6 +94,23 @@ const MapComponent = ({ elements }: MapComponentProps) => {
       : randomIndex;
   };
 
+  const handleOnLoad = (map: google.maps.Map) => {
+    const bounds = new google.maps.LatLngBounds();
+    elements.forEach(({ lat, lng }) => bounds.extend({ lat, lng }));
+    map.fitBounds(bounds);
+  };
+
+  const handleActiveMarker = (marker: number, newIndex: number) => {
+    if (marker === activeMarker) {
+      return;
+    }
+    setActiveMarker(marker);
+
+    // Update the URL with the new index
+    const newQueryString = setIndexQueryString(newIndex);
+    router.replace(`?${newQueryString}`, { scroll: false });
+  };
+
   const latLng = convertPosToLatLngLiteral(pos);
 
   if (elements.length === 0) return <></>;
@@ -99,14 +119,52 @@ const MapComponent = ({ elements }: MapComponentProps) => {
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       <GoogleMap
-        mapContainerStyle={defaultMapContainerStyle}
+        /* onLoad={handleOnLoad}
+        key={elements[0].id && elements.length} */
+        mapContainerStyle={{ width: '100%', height: '100%' }}
+        onClick={() => setActiveMarker(null)}
         center={poi}
-        zoom={18}
+        zoom={15}
       >
-        <Marker position={poi} />
+        <MarkerClusterer>
+          {(clusterer) => (
+            <div>
+              {elements.map((item, idx) => (
+                <Marker
+                  key={item.id}
+                  position={{ lat: item.lat, lng: item.lng }}
+                  clusterer={clusterer}
+                  onClick={() => handleActiveMarker(item.id, idx)}
+                >
+                  {activeMarker === item.id ? (
+                    <InfoWindow
+                      position={{ lat: item.lat, lng: item.lng }}
+                      onCloseClick={() => setActiveMarker(null)}
+                    >
+                      <div className="space-y-2 text-secondary">
+                        <strong className="underline">
+                          Location Index #{idx}
+                        </strong>
+                        <ul>
+                          {Object.entries(item.tags).map(([key, value]) => (
+                            <li key={key}>
+                              <strong>[{key}]</strong> {value}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </InfoWindow>
+                  ) : null}
+                </Marker>
+              ))}
+            </div>
+          )}
+        </MarkerClusterer>
         {/* {latLng ? (
           <StreetViewPanorama
             options={{
+              imageDateControl: true,
+              fullscreenControl: false,
               showRoadLabels: false,
               visible: true,
               position: latLng,
@@ -120,8 +178,21 @@ const MapComponent = ({ elements }: MapComponentProps) => {
           <p>No Street View available</p>
         )} */}
       </GoogleMap>
+      {/*################## Mini Map ##################*/}
+      {/* <div className="absolute bottom-[25px] left-[25px] z-50 h-[250px] w-[250px]">
+        <GoogleMap
+          center={poi}
+          zoom={10}
+          mapContainerStyle={{ width: '100%', height: '100%' }}
+          options={{
+            disableDefaultUI: true,
+          }}
+        >
+          <Marker position={poi} />
+        </GoogleMap>
+      </div> */}
       {/* Controllers */}
-      <div className="absolute bottom-10 left-1/2 z-50 flex -translate-x-1/2 gap-2">
+      <div className="absolute bottom-[25px] left-1/2 z-50 flex -translate-x-1/2 gap-2">
         <Link
           href={`?${setIndexQueryString((elements.length + index - 1) % elements.length)}`}
           scroll={false}
@@ -145,9 +216,9 @@ const MapComponent = ({ elements }: MapComponentProps) => {
           </GoogleButton>
         </Link>
       </div>
-      <div className="absolute left-1/2 top-0 z-50 -translate-x-1/2">
+      <div className="absolute left-1/2 top-[10px] z-50 -translate-x-1/2">
         <Select value={streetViewSource} onValueChange={handleStreetViewSource}>
-          <SelectTrigger className="mt-2 w-fit rounded-[2px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
+          <SelectTrigger className="w-fit rounded-[2px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
             <SelectValue placeholder="Select a Street View Source" />
           </SelectTrigger>
           <SelectContent className="rounded-[2px] border-none bg-[#222]/80 text-white">

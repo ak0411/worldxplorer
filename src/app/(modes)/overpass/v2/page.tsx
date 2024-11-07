@@ -21,7 +21,7 @@ export default function Overpass() {
           <QueryEditor setElements={setElements} />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel collapsible minSize={30} defaultSize={70}>
+        <ResizablePanel minSize={20} defaultSize={70}>
           {/* <StreetViewer elements={elements} /> */}
           <MapComponent elements={elements} />
         </ResizablePanel>

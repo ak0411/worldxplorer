@@ -14,7 +14,7 @@ export default function GoogleButton({
   return (
     <Button
       onClick={onClick}
-      className="rounded-[2px] bg-[#444] text-[#b3b3b3] transition-all hover:bg-[#444] hover:text-[#ffffff]"
+      className="rounded-sm bg-[#444] text-[#b3b3b3] transition-all hover:bg-[#444] hover:text-[#ffffff]"
       disabled={disabled}
     >
       {children}

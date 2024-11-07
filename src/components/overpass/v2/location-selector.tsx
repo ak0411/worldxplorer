@@ -31,7 +31,7 @@ export function LocationSelector({ elements, index }: LocationSelectorProps) {
   return (
     <Select onValueChange={handleValueChange}>
       <SelectTrigger className="w-[100px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
-        <SelectValue placeholder={index + 1}>{index + 1}</SelectValue>
+        <SelectValue placeholder={index}>{index}</SelectValue>
       </SelectTrigger>
       <SelectContent
         side="top"
@@ -52,7 +52,7 @@ export function LocationSelector({ elements, index }: LocationSelectorProps) {
                 value={listIndex.toString()}
                 style={style}
               >
-                {listIndex + 1}
+                {listIndex}
               </SelectItem>
             )}
           </FixedSizeList>
