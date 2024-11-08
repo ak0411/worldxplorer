@@ -18,6 +18,7 @@ export default function MapPanorama({ elements }: Props) {
   const panoRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<google.maps.Map>();
   const panoramaInstance = useRef<google.maps.StreetViewPanorama>();
+  const markerClustererInstance = useRef<MarkerClusterer>();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -60,27 +61,61 @@ export default function MapPanorama({ elements }: Props) {
       } else {
         // Update map center if mapInstance already exists
         mapInstance.current.setCenter(poi);
+        mapInstance.current.setZoom(15);
       }
     }
   }, [elements, index]);
 
-  const markerClustererRef = useRef<MarkerClusterer>();
-
   useEffect(() => {
     if (mapInstance.current) {
-      let markers = [];
-      for (var i = 0; i < elements.length; i++) {
-        var latLng = new google.maps.LatLng(elements[i].lat, elements[i].lng);
+      const infoWindow = new google.maps.InfoWindow();
+
+      const markers = elements.map((element, i) => {
+        const latLng = new google.maps.LatLng(element.lat, element.lng);
+
         const marker = new google.maps.marker.AdvancedMarkerElement({
           position: latLng,
+          gmpClickable: true,
         });
-        markers.push(marker);
-      }
-      markerClustererRef.current?.clearMarkers();
-      markerClustererRef.current = new MarkerClusterer({
-        map: mapInstance.current,
+
+        const content = `
+        <div class="space-y-2 text-secondary">
+          <strong class="underline">
+            Location Index #${i}
+          </strong>
+          <ul>
+            ${Object.entries(element.tags)
+              .map(
+                ([key, value]) => `
+              <li key="${key}">
+                <strong>[${key}]</strong> ${value}
+              </li>
+            `
+              )
+              .join('')}
+          </ul>
+        </div>
+        `;
+
+        marker.addListener('click', () => {
+          infoWindow.setContent(content);
+          infoWindow.open(mapInstance.current, marker);
+
+          if (index !== i) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('index', i.toString());
+            router.replace(`?${params.toString()}`, { scroll: false });
+          }
+        });
+
+        return marker;
       });
-      markerClustererRef.current.addMarkers(markers);
+
+      markerClustererInstance.current?.clearMarkers();
+      markerClustererInstance.current = new MarkerClusterer({
+        map: mapInstance.current,
+        markers,
+      });
     }
   }, [elements]);
 
@@ -137,13 +172,13 @@ export default function MapPanorama({ elements }: Props) {
   return (
     <div className="relative size-full">
       <div
-        className={`absolute bottom-[25px] left-[25px] z-30 ${isHidden && 'hidden'}`}
+        className={`absolute bottom-[25px] left-[25px] z-10 ${isHidden && 'hidden'}`}
       >
         <div
           ref={mapRef}
           className={`${
             isExpanded ? 'h-[600px] w-[900px]' : 'h-[250px] w-[350px]'
-          } rounded`}
+          } rounded border`}
         />
         <Button
           onClick={toggleMapSize}
