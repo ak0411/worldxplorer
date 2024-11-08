@@ -41,23 +41,28 @@ export default function MapPanorama({ elements }: Props) {
 
   useEffect(() => {
     const initialize = () => {
-      if (!position) {
-        panoramaInstance.current?.setVisible(false);
-        return;
-      }
+      if (elements.length === 0) return;
+
+      const poi = { lat: elements[index].lat, lng: elements[index].lng };
 
       if (mapRef.current && panoRef.current) {
         // Initialize the map if it hasn't been created yet
         if (!mapInstance.current) {
           mapInstance.current = new google.maps.Map(mapRef.current, {
-            center: position,
+            /* center: position, */
+            center: poi,
             zoom: 15,
             disableDefaultUI: true,
             streetViewControl: true,
           });
         } else {
           // Update map center if mapInstance already exists
-          mapInstance.current.setCenter(position);
+          mapInstance.current.setCenter(poi);
+        }
+
+        if (!position) {
+          panoramaInstance.current?.setVisible(false);
+          return;
         }
 
         // Initialize the panorama if it hasn't been created yet
