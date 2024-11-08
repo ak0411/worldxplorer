@@ -61,7 +61,6 @@ export default function MapPanorama({ elements }: Props) {
       } else {
         // Update map center if mapInstance already exists
         mapInstance.current.setCenter(poi);
-        mapInstance.current.setZoom(15);
       }
     }
   }, [elements, index]);
@@ -134,6 +133,8 @@ export default function MapPanorama({ elements }: Props) {
               heading: 0,
               pitch: 0,
             },
+            zoomControl: false,
+            fullscreenControl: false,
           }
         );
         mapInstance.current?.setStreetView(panoramaInstance.current);
@@ -172,16 +173,11 @@ export default function MapPanorama({ elements }: Props) {
   }, [elements, index, streetViewSource, pos]);
 
   return (
-    <div className="relative size-full">
+    <div className="relative size-full" ref={panoRef}>
       <div
-        className={`absolute bottom-[25px] left-[25px] z-10 ${isHidden && 'hidden'}`}
+        className={`absolute z-20 ${isHidden && 'hidden'} ${isExpanded ? 'bottom-0 left-0 right-0 h-1/2' : 'bottom-[25px] left-[25px] h-1/3 w-[350px]'} rounded border`}
       >
-        <div
-          ref={mapRef}
-          className={`${
-            isExpanded ? 'h-[600px] w-[900px]' : 'h-[250px] w-[350px]'
-          } rounded border`}
-        />
+        <div ref={mapRef} className="size-full" />
         <Button
           onClick={toggleMapSize}
           className="absolute right-2 top-2 bg-white text-gray-300 shadow-md hover:bg-white hover:text-gray-100"
@@ -190,7 +186,6 @@ export default function MapPanorama({ elements }: Props) {
           {isExpanded ? <Shrink /> : <Expand />}
         </Button>
       </div>
-      <div ref={panoRef} className="size-full" />
       {!position && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2">
           <p className="text-black">
@@ -205,7 +200,7 @@ export default function MapPanorama({ elements }: Props) {
       <MapController
         elements={elements}
         index={index}
-        className="absolute bottom-[25px] left-1/2 z-10 flex -translate-x-1/2 gap-2"
+        className="absolute bottom-[25px] left-1/2 z-20 flex -translate-x-1/2 gap-2"
         toggleMap={toggleMap}
       />
     </div>
