@@ -36,12 +36,6 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning className="dark">
         <head>
           <link rel="icon" href={globe.src} />
-          <link
-            rel="preconnect"
-            href="https://maps.googleapis.com"
-            crossOrigin="use-credentials"
-          />
-          <link rel="dns-prefetch" href="https://maps.googleapis.com" />
         </head>
         <body
           className={`${geistMono.className} ${mcFont.variable} antialiased`}
