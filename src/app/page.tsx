@@ -17,10 +17,10 @@ const modes = [
   },
   {
     icon: Map,
-    title: 'Overpass Mode',
+    title: 'Overpass Mode V2',
     description:
       'Use Overpass QL queries to discover specific locations and points of interest around the world.',
-    href: '/overpass',
+    href: '/overpass/v2',
     buttonText: 'Go Query',
   },
 ];
