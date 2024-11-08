@@ -1,46 +1,24 @@
-'use client';
-
-import GoogleButton from '@/components/shared/GoogleButton';
 import { Element } from '@/lib/types';
+import { convertPosToLatLngLiteral } from '@/lib/utils';
 import { getStreetViewable } from '@/utils/getStreetViewable';
-import {
-  GoogleMap,
-  InfoWindow,
-  Marker,
-  MarkerClusterer,
-  StreetViewPanorama,
-} from '@react-google-maps/api';
-import { ChevronLeft, ChevronRight, Dices } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { LocationSelector } from './location-selector';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import StreetViewSourceSelector from './source-selector';
+import MapController from './map-controller';
+import { Button } from '@/components/ui/button';
+import { Expand, Shrink } from 'lucide-react';
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
-type MapComponentProps = {
+type Props = {
   elements: Element[];
 };
 
-const convertPosToLatLngLiteral = (pos: string | null) => {
-  if (!pos) return null;
-
-  const [lat, lng] = pos.split(',').map(Number);
-  if (!isNaN(lat) && !isNaN(lng)) {
-    return { lat, lng };
-  }
-  return null;
-};
-
-const MapComponent = ({ elements }: MapComponentProps) => {
-  const [activeMarker, setActiveMarker] = useState<number | null>(null);
+export default function MapPanorama({ elements }: Props) {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const panoRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<google.maps.Map>();
+  const panoramaInstance = useRef<google.maps.StreetViewPanorama>();
+  const markerClustererInstance = useRef<MarkerClusterer>();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -49,6 +27,124 @@ const MapComponent = ({ elements }: MapComponentProps) => {
   const streetViewSource = (searchParams.get('streetViewSource') ??
     google.maps.StreetViewSource.DEFAULT) as google.maps.StreetViewSource;
   const pos = searchParams.get('pos');
+
+  const position = useMemo(() => convertPosToLatLngLiteral(pos), [pos]);
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+
+  const toggleMapSize = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  const toggleMap = () => {
+    setIsHidden((prev) => !prev);
+  };
+
+  /* INITIALIZING OR UPDATING MAP */
+  useEffect(() => {
+    if (elements.length === 0) return;
+
+    const poi = { lat: elements[index].lat, lng: elements[index].lng };
+
+    if (mapRef.current) {
+      // Initialize the map if it hasn't been created yet
+      if (!mapInstance.current) {
+        mapInstance.current = new google.maps.Map(mapRef.current, {
+          center: poi,
+          zoom: 15,
+          disableDefaultUI: true,
+          streetViewControl: true,
+          mapId: 'eec759fc5f43c7c',
+          zoomControl: true,
+        });
+      } else {
+        // Update map center if mapInstance already exists
+        mapInstance.current.setCenter(poi);
+        mapInstance.current.setZoom(15);
+      }
+    }
+  }, [elements, index]);
+
+  useEffect(() => {
+    if (mapInstance.current) {
+      const infoWindow = new google.maps.InfoWindow({
+        disableAutoPan: true,
+      });
+
+      const markers = elements.map((element, i) => {
+        const latLng = new google.maps.LatLng(element.lat, element.lng);
+
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          position: latLng,
+          gmpClickable: true,
+        });
+
+        const content = `
+        <div class="space-y-2 text-secondary">
+          <strong class="underline">
+            Location Index #${i}
+          </strong>
+          <ul>
+            ${Object.entries(element.tags)
+              .map(
+                ([key, value]) => `
+              <li key="${key}">
+                <strong>[${key}]</strong> ${value}
+              </li>
+            `
+              )
+              .join('')}
+          </ul>
+        </div>
+        `;
+
+        marker.addListener('click', () => {
+          infoWindow.setContent(content);
+          infoWindow.open(mapInstance.current, marker);
+
+          if (index !== i) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('index', i.toString());
+            router.replace(`?${params.toString()}`, { scroll: false });
+          }
+        });
+
+        return marker;
+      });
+
+      markerClustererInstance.current?.clearMarkers();
+      markerClustererInstance.current = new MarkerClusterer({
+        map: mapInstance.current,
+        markers,
+      });
+    }
+  }, [elements]);
+
+  /* INITIALIZING OR UPDATING STREET VIEW (PANO) */
+  useEffect(() => {
+    if (panoRef.current && position) {
+      // Initialize the panorama if it hasn't been created yet
+      if (!panoramaInstance.current) {
+        panoramaInstance.current = new google.maps.StreetViewPanorama(
+          panoRef.current,
+          {
+            position,
+            pov: {
+              heading: 0,
+              pitch: 0,
+            },
+          }
+        );
+        mapInstance.current?.setStreetView(panoramaInstance.current);
+      } else {
+        panoramaInstance.current.setPosition(position);
+        panoramaInstance.current.setVisible(true);
+      }
+    } else {
+      panoramaInstance.current?.setVisible(false);
+    }
+  }, [position]);
 
   useEffect(() => {
     if (elements.length > 0) {
@@ -75,132 +171,43 @@ const MapComponent = ({ elements }: MapComponentProps) => {
     }
   }, [elements, index, streetViewSource, pos]);
 
-  const setIndexQueryString = (newIndex: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('index', newIndex.toString());
-    return params.toString();
-  };
-
-  const handleStreetViewSource = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('streetViewSource', value);
-    router.push(`?${params.toString()}`, { scroll: false });
-  };
-
-  const getRandomIndex = () => {
-    const randomIndex = Math.floor(Math.random() * elements.length);
-    return randomIndex === index
-      ? (randomIndex + 1) % elements.length
-      : randomIndex;
-  };
-
-  const handleActiveMarker = (marker: number, newIndex: number) => {
-    if (marker === activeMarker) {
-      return;
-    }
-    setActiveMarker(marker);
-
-    // Update the URL with the new index
-    const newQueryString = setIndexQueryString(newIndex);
-    router.replace(`?${newQueryString}`, { scroll: false });
-  };
-
-  const latLng = convertPosToLatLngLiteral(pos);
-
-  if (elements.length === 0) return <></>;
-
-  const poi = { lat: elements[index].lat, lng: elements[index].lng };
-
   return (
-    <div className="relative flex h-full w-full items-center justify-center">
-      <GoogleMap
-        mapContainerStyle={{ width: '100%', height: '100%' }}
-        onClick={() => setActiveMarker(null)}
-        center={poi}
-        zoom={15}
+    <div className="relative size-full">
+      <div
+        className={`absolute bottom-[25px] left-[25px] z-10 ${isHidden && 'hidden'}`}
       >
-        <MarkerClusterer>
-          {(clusterer) => (
-            <div>
-              {elements.map((item, idx) => (
-                <Marker
-                  key={item.id}
-                  position={{ lat: item.lat, lng: item.lng }}
-                  clusterer={clusterer}
-                  onClick={() => handleActiveMarker(item.id, idx)}
-                >
-                  {activeMarker === item.id ? (
-                    <InfoWindow
-                      position={{ lat: item.lat, lng: item.lng }}
-                      onCloseClick={() => setActiveMarker(null)}
-                    >
-                      <div className="space-y-2 text-secondary">
-                        <strong className="underline">
-                          Location Index #{idx}
-                        </strong>
-                        <ul>
-                          {Object.entries(item.tags).map(([key, value]) => (
-                            <li key={key}>
-                              <strong>[{key}]</strong> {value}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </InfoWindow>
-                  ) : null}
-                </Marker>
-              ))}
-            </div>
-          )}
-        </MarkerClusterer>
-      </GoogleMap>
-      <div className="absolute bottom-[25px] left-1/2 z-50 flex -translate-x-1/2 gap-2">
-        <Link
-          href={`?${setIndexQueryString((elements.length + index - 1) % elements.length)}`}
-          scroll={false}
+        <div
+          ref={mapRef}
+          className={`${
+            isExpanded ? 'h-[600px] w-[900px]' : 'h-[250px] w-[350px]'
+          } rounded border`}
+        />
+        <Button
+          onClick={toggleMapSize}
+          className="absolute right-2 top-2 bg-white text-gray-300 shadow-md hover:bg-white hover:text-gray-100"
+          size="icon"
         >
-          <GoogleButton>
-            <ChevronLeft />
-          </GoogleButton>
-        </Link>
-        <Link href={`?${setIndexQueryString(getRandomIndex())}`} scroll={false}>
-          <GoogleButton>
-            <Dices />
-          </GoogleButton>
-        </Link>
-        <LocationSelector elements={elements} index={index} />
-        <Link
-          href={`?${setIndexQueryString((elements.length + index + 1) % elements.length)}`}
-          scroll={false}
-        >
-          <GoogleButton>
-            <ChevronRight />
-          </GoogleButton>
-        </Link>
+          {isExpanded ? <Shrink /> : <Expand />}
+        </Button>
       </div>
-      <div className="absolute left-1/2 top-[10px] z-50 -translate-x-1/2">
-        <Select value={streetViewSource} onValueChange={handleStreetViewSource}>
-          <SelectTrigger className="w-fit rounded-[2px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
-            <SelectValue placeholder="Select a Street View Source" />
-          </SelectTrigger>
-          <SelectContent className="rounded-[2px] border-none bg-[#222]/80 text-white">
-            <SelectGroup>
-              <SelectLabel>Street View Source</SelectLabel>
-              <SelectItem value={google.maps.StreetViewSource.DEFAULT}>
-                Default
-              </SelectItem>
-              <SelectItem value={google.maps.StreetViewSource.GOOGLE}>
-                Google
-              </SelectItem>
-              <SelectItem value={google.maps.StreetViewSource.OUTDOOR}>
-                Outdoor
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+      <div ref={panoRef} className="size-full" />
+      {!position && (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2">
+          <p className="text-black">
+            No nearby street view for this location...
+          </p>
+        </div>
+      )}
+      <StreetViewSourceSelector
+        streetViewSource={streetViewSource}
+        className="absolute left-1/2 top-[10px] z-10 -translate-x-1/2"
+      />
+      <MapController
+        elements={elements}
+        index={index}
+        className="absolute bottom-[25px] left-1/2 z-10 flex -translate-x-1/2 gap-2"
+        toggleMap={toggleMap}
+      />
     </div>
   );
-};
-
-export { MapComponent };
+}
