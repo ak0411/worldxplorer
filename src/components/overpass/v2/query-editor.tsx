@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useTransition } from 'react';
+import { startTransition, useActionState, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -11,27 +11,10 @@ import { Resources } from '@/components/overpass/Resources';
 import { Examples } from '@/components/overpass/Examples';
 import { getElements } from '@/app/(modes)/overpass/actions';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useFormState, useFormStatus } from 'react-dom';
 
 type QueryEditorProps = {
   setElements: (elements: Element[] | null) => void;
 };
-
-function SubmitButton({ disabled }: { disabled?: boolean }) {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" variant="outline" disabled={pending || disabled}>
-      {pending ? (
-        <>
-          <Loader2 className="mr-2 size-4 animate-spin" />
-          Loading...
-        </>
-      ) : (
-        'Run Query'
-      )}
-    </Button>
-  );
-}
 
 const initialState = {
   error: null,
@@ -41,8 +24,10 @@ const initialState = {
 export default function QueryEditor({ setElements }: QueryEditorProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [state, formAction] = useFormState(getElements, initialState);
-  const [isPending, startTransition] = useTransition();
+  const [state, formAction, isPending] = useActionState(
+    getElements,
+    initialState
+  );
 
   const encodedQuery = searchParams.get('encodedQuery');
 
@@ -124,7 +109,16 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
             {state.error}
           </div>
         )}
-        <SubmitButton disabled={isPending} />
+        <Button type="submit" variant="outline" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 size-4 animate-spin" />
+              Loading...
+            </>
+          ) : (
+            'Run Query'
+          )}
+        </Button>
       </form>
     </div>
   );
