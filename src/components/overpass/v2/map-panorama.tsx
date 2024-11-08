@@ -7,6 +7,7 @@ import StreetViewSourceSelector from './source-selector';
 import MapController from './map-controller';
 import { Button } from '@/components/ui/button';
 import { Expand, Shrink } from 'lucide-react';
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
 type Props = {
   elements: Element[];
@@ -39,55 +40,72 @@ export default function MapPanorama({ elements }: Props) {
     setIsHidden((prev) => !prev);
   };
 
+  /* INITIALIZING OR UPDATING MAP */
   useEffect(() => {
-    const initialize = () => {
-      if (elements.length === 0) return;
+    if (elements.length === 0) return;
 
-      const poi = { lat: elements[index].lat, lng: elements[index].lng };
+    const poi = { lat: elements[index].lat, lng: elements[index].lng };
 
-      if (mapRef.current && panoRef.current) {
-        // Initialize the map if it hasn't been created yet
-        if (!mapInstance.current) {
-          mapInstance.current = new google.maps.Map(mapRef.current, {
-            /* center: position, */
-            center: poi,
-            zoom: 15,
-            disableDefaultUI: true,
-            streetViewControl: true,
-          });
-        } else {
-          // Update map center if mapInstance already exists
-          mapInstance.current.setCenter(poi);
-        }
-
-        if (!position) {
-          panoramaInstance.current?.setVisible(false);
-          return;
-        }
-
-        // Initialize the panorama if it hasn't been created yet
-        if (!panoramaInstance.current) {
-          panoramaInstance.current = new google.maps.StreetViewPanorama(
-            panoRef.current,
-            {
-              position,
-              pov: {
-                heading: 0,
-                pitch: 0,
-              },
-            }
-          );
-          mapInstance.current.setStreetView(panoramaInstance.current);
-        } else {
-          // Update panorama position if panoramaInstance already exists
-          panoramaInstance.current.setPosition(position);
-          panoramaInstance.current.setVisible(true);
-        }
+    if (mapRef.current) {
+      // Initialize the map if it hasn't been created yet
+      if (!mapInstance.current) {
+        mapInstance.current = new google.maps.Map(mapRef.current, {
+          center: poi,
+          zoom: 15,
+          disableDefaultUI: true,
+          streetViewControl: true,
+          mapId: 'eec759fc5f43c7c',
+          zoomControl: true,
+        });
+      } else {
+        // Update map center if mapInstance already exists
+        mapInstance.current.setCenter(poi);
       }
-    };
+    }
+  }, [elements, index]);
 
-    if (window.google && window.google.maps) {
-      initialize();
+  const markerClustererRef = useRef<MarkerClusterer>();
+
+  useEffect(() => {
+    if (mapInstance.current) {
+      let markers = [];
+      for (var i = 0; i < elements.length; i++) {
+        var latLng = new google.maps.LatLng(elements[i].lat, elements[i].lng);
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          position: latLng,
+        });
+        markers.push(marker);
+      }
+      markerClustererRef.current?.clearMarkers();
+      markerClustererRef.current = new MarkerClusterer({
+        map: mapInstance.current,
+      });
+      markerClustererRef.current.addMarkers(markers);
+    }
+  }, [elements]);
+
+  /* INITIALIZING OR UPDATING STREET VIEW (PANO) */
+  useEffect(() => {
+    if (panoRef.current && position) {
+      // Initialize the panorama if it hasn't been created yet
+      if (!panoramaInstance.current) {
+        panoramaInstance.current = new google.maps.StreetViewPanorama(
+          panoRef.current,
+          {
+            position,
+            pov: {
+              heading: 0,
+              pitch: 0,
+            },
+          }
+        );
+        mapInstance.current?.setStreetView(panoramaInstance.current);
+      } else {
+        panoramaInstance.current.setPosition(position);
+        panoramaInstance.current.setVisible(true);
+      }
+    } else {
+      panoramaInstance.current?.setVisible(false);
     }
   }, [position]);
 
@@ -119,7 +137,7 @@ export default function MapPanorama({ elements }: Props) {
   return (
     <div className="relative size-full">
       <div
-        className={`absolute bottom-[25px] left-[25px] z-20 ${isHidden && 'hidden'}`}
+        className={`absolute bottom-[25px] left-[25px] z-30 ${isHidden && 'hidden'}`}
       >
         <div
           ref={mapRef}
@@ -137,7 +155,7 @@ export default function MapPanorama({ elements }: Props) {
       </div>
       <div ref={panoRef} className="size-full" />
       {!position && (
-        <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2">
           <p className="text-black">
             No nearby street view for this location...
           </p>
