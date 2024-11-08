@@ -1,5 +1,4 @@
 import getCountry from '@/utils/getCountry';
-import { loader } from '@/utils/googleMapsApiLoader';
 import { getRandomPointInCountry } from './getRandomPointInCountry';
 
 export async function getStreetViewable(
@@ -66,51 +65,47 @@ async function generateValidLatLng(
   // console.log('Trying to get panorama for', lat, lng);
 
   return new Promise((resolve) => {
-    loader.importLibrary('streetView').then(() => {
-      const panorama = new google.maps.StreetViewService();
-      panorama.getPanorama(
-        {
-          preference: google.maps.StreetViewPreference.BEST,
-          location: { lat, lng },
-          radius: 1000,
-          sources: [google.maps.StreetViewSource.GOOGLE],
-        },
-        async (data, status) => {
-          if (status === 'OK' && data) {
-            const latLng = data.location?.latLng;
-            if (!latLng) {
-              console.log(
-                "Failed to get location, couldn't find latLng object"
-              );
-              resolve(null);
-              return;
-            }
-
-            try {
-              const country = await getCountry(latLng.lat(), latLng.lng());
-              if (
-                !['MN', 'KR'].includes(country) &&
-                !data.location?.description
-              ) {
-                console.log('No description, returning null');
-                resolve(null);
-              } else {
-                resolve({ lat: latLng.lat(), lng: latLng.lng() });
-              }
-            } catch (e) {
-              console.log('Failed to get country', e);
-              resolve({
-                lat: latLng.lat(),
-                lng: latLng.lng(),
-              });
-            }
-          } else {
-            // console.log('Failed to get panorama', status, data);
+    const panorama = new google.maps.StreetViewService();
+    panorama.getPanorama(
+      {
+        preference: google.maps.StreetViewPreference.BEST,
+        location: { lat, lng },
+        radius: 1000,
+        sources: [google.maps.StreetViewSource.GOOGLE],
+      },
+      async (data, status) => {
+        if (status === 'OK' && data) {
+          const latLng = data.location?.latLng;
+          if (!latLng) {
+            console.log("Failed to get location, couldn't find latLng object");
             resolve(null);
+            return;
           }
+
+          try {
+            const country = await getCountry(latLng.lat(), latLng.lng());
+            if (
+              !['MN', 'KR'].includes(country) &&
+              !data.location?.description
+            ) {
+              console.log('No description, returning null');
+              resolve(null);
+            } else {
+              resolve({ lat: latLng.lat(), lng: latLng.lng() });
+            }
+          } catch (e) {
+            console.log('Failed to get country', e);
+            resolve({
+              lat: latLng.lat(),
+              lng: latLng.lng(),
+            });
+          }
+        } else {
+          // console.log('Failed to get panorama', status, data);
+          resolve(null);
         }
-      );
-    });
+      }
+    );
   });
 }
 
