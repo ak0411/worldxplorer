@@ -67,7 +67,6 @@ export default function MapPanorama({ elements }: Props) {
   }, [elements, index]);
 
   useEffect(() => {
-    console.log('markers useEffect ran.');
     if (mapInstance.current) {
       const infoWindow = new google.maps.InfoWindow({
         disableAutoPan: true,
