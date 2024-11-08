@@ -13,7 +13,7 @@ import { Element } from '@/lib/types';
 import { useState } from 'react';
 
 export default function Overpass() {
-  const [elements, setElements] = useState<Element[]>([]);
+  const [elements, setElements] = useState<Element[] | null>(null);
 
   return (
     <div className="h-screen p-2">
@@ -25,7 +25,13 @@ export default function Overpass() {
         <ResizablePanel minSize={20} defaultSize={70}>
           {/* <StreetViewer elements={elements} /> */}
           {/* <MapComponent elements={elements} /> */}
-          <MapPanorama elements={elements} />
+          {elements ? (
+            <MapPanorama elements={elements} />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <p className="text-xl">Run a query to Street View</p>
+            </div>
+          )}
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

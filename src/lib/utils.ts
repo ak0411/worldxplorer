@@ -14,3 +14,8 @@ export const convertPosToLatLngLiteral = (pos: string | null) => {
   }
   return null;
 };
+
+export const getRandomIndex = (currentIndex: number, len: number) => {
+  const randomIndex = Math.floor(Math.random() * len);
+  return randomIndex === currentIndex ? (randomIndex + 1) % len : randomIndex;
+};

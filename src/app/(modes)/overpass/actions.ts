@@ -4,7 +4,7 @@ import { Element } from '@/lib/types';
 
 type State = {
   error: string | null;
-  elements: Element[];
+  elements: Element[] | null;
 };
 
 export async function getElements(

@@ -14,7 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useFormState, useFormStatus } from 'react-dom';
 
 type QueryEditorProps = {
-  setElements: (elements: Element[]) => void;
+  setElements: (elements: Element[] | null) => void;
 };
 
 function SubmitButton({ disabled }: { disabled?: boolean }) {
@@ -35,7 +35,7 @@ function SubmitButton({ disabled }: { disabled?: boolean }) {
 
 const initialState = {
   error: null,
-  elements: [],
+  elements: null,
 };
 
 export default function QueryEditor({ setElements }: QueryEditorProps) {
@@ -65,7 +65,7 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
     const query = formData.get('query') as string;
     if (!query.trim()) {
       router.replace('/overpass/v2');
-      setElements([]);
+      setElements(null);
     } else {
       params.set('encodedQuery', encodeURIComponent(query));
       params.set('index', '0');
