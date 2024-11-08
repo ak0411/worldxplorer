@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Element } from '@/lib/types';
 import { convertPosToLatLngLiteral } from '@/lib/utils';
 import { getStreetViewable } from '@/utils/getStreetViewable';
@@ -16,9 +17,9 @@ type Props = {
 export default function MapPanorama({ elements }: Props) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const panoRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map>();
-  const panoramaInstance = useRef<google.maps.StreetViewPanorama>();
-  const markerClustererInstance = useRef<MarkerClusterer>();
+  const mapInstance = useRef<google.maps.Map>(undefined);
+  const panoramaInstance = useRef<google.maps.StreetViewPanorama>(undefined);
+  const markerClustererInstance = useRef<MarkerClusterer>(undefined);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -66,6 +67,7 @@ export default function MapPanorama({ elements }: Props) {
   }, [elements, index]);
 
   useEffect(() => {
+    console.log('markers useEffect ran.');
     if (mapInstance.current) {
       const infoWindow = new google.maps.InfoWindow({
         disableAutoPan: true,

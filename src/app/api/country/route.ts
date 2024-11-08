@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error no type for geojson-places
 import { lookUp } from 'geojson-places';
 import { NextRequest, NextResponse } from 'next/server';
 

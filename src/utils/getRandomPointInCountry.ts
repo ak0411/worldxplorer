@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import borders from '@/public/genBorders.json' with { type: 'json' };
 
 export function getRandomPointInCountry(

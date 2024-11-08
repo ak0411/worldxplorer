@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export default async function getCountry(lat?: number, lng?: number) {
   let data = null;
   try {
