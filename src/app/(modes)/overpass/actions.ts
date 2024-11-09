@@ -26,26 +26,26 @@ export async function getElements(
         return {
           error:
             'Invalid query format. Please check your syntax and try again.',
-          elements: prevState.elements,
+          elements: null,
         };
       }
       if (response.status === 429) {
         return {
           error: 'Too many requests. Please wait a moment and try again.',
-          elements: prevState.elements,
+          elements: null,
         };
       }
       if (response.status === 504) {
         return {
           error:
             'Query timed out. Try simplifying your query or reducing the area.',
-          elements: prevState.elements,
+          elements: null,
         };
       }
 
       return {
         error: `Server error (${response.status}). Please try again later. Details: ${response.statusText}`,
-        elements: prevState.elements,
+        elements: null,
       };
     }
 
@@ -56,14 +56,14 @@ export async function getElements(
     } catch (parseError) {
       return {
         error: `Failed to parse API response: ${parseError instanceof Error ? parseError.message : 'Unknown parsing error'}. Response: ${responseText.substring(0, 200)}...`,
-        elements: prevState.elements,
+        elements: null,
       };
     }
 
     if (!data?.elements) {
       return {
         error: 'Invalid API response format: missing elements array',
-        elements: prevState.elements,
+        elements: null,
       };
     }
 
@@ -83,7 +83,7 @@ export async function getElements(
     return {
       error:
         err instanceof Error ? err.message : 'An unexpected error occurred',
-      elements: prevState.elements,
+      elements: null,
     };
   }
 }
