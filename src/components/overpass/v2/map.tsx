@@ -1,35 +1,23 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Element } from '@/lib/types';
-import { convertPosToLatLngLiteral } from '@/lib/utils';
-import { getStreetViewable } from '@/utils/getStreetViewable';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import StreetViewSourceSelector from './source-selector';
 import MapController from './map-controller';
 import { Button } from '@/components/ui/button';
 import { Expand, Shrink } from 'lucide-react';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { useOverpassState } from '@/hooks/use-overpass-state';
 
 type Props = {
   elements: Element[];
-  collapseQueryEditor: () => void;
 };
 
-export default function MapPanorama({ elements, collapseQueryEditor }: Props) {
+export default function MapPanorama({ elements }: Props) {
   const mapInstance = useRef<google.maps.Map>(null);
   const panoramaInstance = useRef<google.maps.StreetViewPanorama>(null);
   const markerClustererInstance = useRef<MarkerClusterer>(null);
 
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const index = parseInt(searchParams.get('index') ?? '0');
-  const validIndex = elements[index] ? index : 0;
-  const streetViewSource = (searchParams.get('streetViewSource') ??
-    google.maps.StreetViewSource.DEFAULT) as google.maps.StreetViewSource;
-  const pos = searchParams.get('pos');
-
-  const position = useMemo(() => convertPosToLatLngLiteral(pos), [pos]);
+  const { overpassState } = useOverpassState();
+  const { pos: position, index } = overpassState;
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
@@ -42,8 +30,16 @@ export default function MapPanorama({ elements, collapseQueryEditor }: Props) {
     setIsHidden((prev) => !prev);
   };
 
-  const initStreetView = () => {
-    return new google.maps.StreetViewPanorama(
+  const center = useMemo(
+    () => ({
+      lat: elements[index!].lat,
+      lng: elements[index!].lng,
+    }),
+    [elements, index]
+  );
+
+  useEffect(() => {
+    panoramaInstance.current = new google.maps.StreetViewPanorama(
       document.getElementById('streetview') as HTMLElement,
       {
         position,
@@ -55,20 +51,36 @@ export default function MapPanorama({ elements, collapseQueryEditor }: Props) {
         fullscreenControl: false,
       }
     );
-  };
 
-  const initMap = (center: google.maps.LatLngLiteral) => {
-    return new google.maps.Map(document.getElementById('map') as HTMLElement, {
-      center,
-      zoom: 15,
-      disableDefaultUI: true,
-      streetViewControl: true,
-      zoomControl: true,
-      mapId: 'eec759fc5f43c7c',
-    });
-  };
+    mapInstance.current = new google.maps.Map(
+      document.getElementById('map') as HTMLElement,
+      {
+        center,
+        zoom: 15,
+        disableDefaultUI: true,
+        streetViewControl: true,
+        zoomControl: true,
+        mapId: 'eec759fc5f43c7c',
+      }
+    );
+    mapInstance.current.setStreetView(panoramaInstance.current);
+  }, []);
 
-  const populateMarkers = () => {
+  useEffect(() => {
+    if (panoramaInstance.current) {
+      panoramaInstance.current.setPosition(position || null);
+    }
+  }, [position]);
+
+  useEffect(() => {
+    if (mapInstance.current && center) {
+      mapInstance.current.setCenter(center);
+    }
+  }, [center, index]);
+
+  useEffect(() => {
+    if (!mapInstance.current) return;
+
     const infoWindow = new google.maps.InfoWindow({
       disableAutoPan: true,
     });
@@ -104,68 +116,25 @@ export default function MapPanorama({ elements, collapseQueryEditor }: Props) {
         infoWindow.setContent(content);
         infoWindow.open(mapInstance.current, marker);
 
-        const currentParams = new URLSearchParams(window.location.search);
+        /* const currentParams = new URLSearchParams(window.location.search);
         currentParams.set('index', i.toString());
-        router.replace(`?${currentParams.toString()}`, { scroll: false });
+        router.replace(`?${currentParams.toString()}`, { scroll: false }); */
       });
 
       return marker;
     });
 
-    markerClustererInstance.current?.clearMarkers();
+    if (markerClustererInstance.current)
+      markerClustererInstance.current.clearMarkers();
     markerClustererInstance.current = new MarkerClusterer({
       map: mapInstance.current,
       markers,
     });
-  };
-
-  useEffect(() => {
-    populateMarkers();
-    collapseQueryEditor();
-  }, [elements, mapInstance.current]);
-
-  useEffect(() => {
-    if (!panoramaInstance.current) {
-      panoramaInstance.current = initStreetView();
-    } else {
-      panoramaInstance.current.setPosition(position);
-    }
-
-    const center = {
-      lat: elements[validIndex].lat,
-      lng: elements[validIndex].lng,
-    };
-    if (!mapInstance.current) {
-      mapInstance.current = initMap(center);
-      mapInstance.current.setStreetView(panoramaInstance.current);
-    } else {
-      mapInstance.current.setCenter(center);
-    }
-  }, [pos, index]);
-
-  useEffect(() => {
-    const updatePosition = async () => {
-      const validPos = await getStreetViewable(
-        elements[validIndex].lat,
-        elements[validIndex].lng,
-        streetViewSource
-      );
-
-      const params = new URLSearchParams(searchParams.toString());
-      if (validPos) {
-        const posString = `${validPos.lat},${validPos.lng}`;
-        params.set('pos', posString);
-      } else {
-        params.delete('pos');
-      }
-      router.replace(`?${params.toString()}`, { scroll: false });
-    };
-
-    updatePosition();
-  }, [elements, index, streetViewSource, pos]);
+  }, [elements]);
 
   return (
-    <div id="streetview" className="relative size-full">
+    <div className="relative size-full">
+      <div id="streetview" className="size-full" />
       <div
         className={`absolute z-20 ${isHidden && 'hidden'} ${isExpanded ? 'bottom-0 left-0 right-0 h-1/2' : 'bottom-[25px] left-[25px] h-1/3 w-[350px]'} rounded border`}
       >
@@ -178,13 +147,9 @@ export default function MapPanorama({ elements, collapseQueryEditor }: Props) {
           {isExpanded ? <Shrink /> : <Expand />}
         </Button>
       </div>
-      <StreetViewSourceSelector
-        streetViewSource={streetViewSource}
-        className="absolute left-1/2 top-[10px] z-10 -translate-x-1/2"
-      />
+      <StreetViewSourceSelector className="absolute left-1/2 top-[10px] z-10 -translate-x-1/2" />
       <MapController
         elements={elements}
-        index={index}
         className="absolute bottom-[25px] left-1/2 z-20 flex -translate-x-1/2 gap-2"
         toggleMap={toggleMap}
       />

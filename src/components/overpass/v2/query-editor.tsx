@@ -1,7 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { startTransition, useActionState, useEffect } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  startTransition,
+  useActionState,
+  useEffect,
+} from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -11,10 +16,10 @@ import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { Resources } from '@/components/overpass/Resources';
 import { Examples } from '@/components/overpass/Examples';
 import { getElements } from '@/app/(modes)/overpass/actions';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useOverpassState } from '@/hooks/use-overpass-state';
 
 type QueryEditorProps = {
-  setElements: (elements: Element[] | null) => void;
+  setElements: Dispatch<SetStateAction<Element[] | null>>;
 };
 
 const initialState = {
@@ -23,20 +28,18 @@ const initialState = {
 };
 
 export default function QueryEditor({ setElements }: QueryEditorProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [state, formAction, isPending] = useActionState(
     getElements,
     initialState
   );
 
-  const encodedQuery = searchParams.get('encodedQuery');
+  const { overpassState, setOverpassState } = useOverpassState();
 
   useEffect(() => {
-    if (encodedQuery) {
+    if (overpassState.query) {
       startTransition(() => {
         const formData = new FormData();
-        formData.set('query', decodeURIComponent(encodedQuery));
+        formData.set('query', overpassState.query as string);
         formAction(formData);
       });
     }
@@ -44,21 +47,7 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
 
   useEffect(() => {
     setElements(state.elements);
-  }, [state.elements]);
-
-  const handleFormAction = async (formData: FormData) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const query = formData.get('query') as string;
-    if (!query.trim()) {
-      router.replace('/overpass/v2');
-      setElements(null);
-    } else {
-      params.set('encodedQuery', encodeURIComponent(query));
-      params.set('index', '0');
-      router.replace(`?${params.toString()}`, { scroll: false });
-      formAction(formData);
-    }
-  };
+  }, [setElements, state.elements]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const { value } = e.currentTarget;
@@ -96,14 +85,15 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
           <Examples />
         </div>
       </div>
-      <form action={handleFormAction} className="flex h-full flex-col gap-4">
+      <form action={formAction} className="flex h-full flex-col gap-4">
         <Textarea
           className="flex-grow bg-secondary p-2 text-lg focus-visible:ring-transparent"
           placeholder="Enter your query here..."
           onKeyDown={handleKeyDown}
-          defaultValue={decodeURIComponent(encodedQuery ?? '')}
+          defaultValue={overpassState.query}
           name="query"
           disabled={isPending}
+          onChange={(ev) => setOverpassState({ query: ev.target.value })}
         />
         {state.error && (
           <div className="rounded-md bg-destructive/15 p-3 text-destructive">

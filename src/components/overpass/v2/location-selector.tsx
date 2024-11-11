@@ -7,32 +7,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useOverpassState } from '@/hooks/use-overpass-state';
 import { Element } from '@/lib/types';
-import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { FixedSizeList } from 'react-window';
 
 type LocationSelectorProps = {
   elements: Element[];
-  index: number;
 };
-export function LocationSelector({ elements, index }: LocationSelectorProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const handleValueChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('index', value);
-    router.replace(`?${params.toString()}`);
-  };
-
+export function LocationSelector({ elements }: LocationSelectorProps) {
+  const { overpassState, setOverpassState } = useOverpassState();
+  const { index } = overpassState;
   const itemSize = 35;
   const itemCount = elements ? elements.length : 0;
   return (
-    <Select onValueChange={handleValueChange} value={index.toString()}>
+    <Select
+      onValueChange={(value) => setOverpassState({ index: parseInt(value) })}
+      value={index!.toString()}
+    >
       <SelectTrigger className="w-[100px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
         <SelectValue>
-          {elements[index] ? index : 'Select by Location Index'}
+          {elements[index!] ? index : 'Select by Location Index'}
         </SelectValue>
       </SelectTrigger>
       <SelectContent
