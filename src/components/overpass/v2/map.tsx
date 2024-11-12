@@ -41,6 +41,7 @@ export default function MapPanorama({ elements }: Props) {
     [elements, index]
   );
 
+  // INITIALIE PANORAMA AND MAP
   useEffect(() => {
     panoramaInstance.current = new google.maps.StreetViewPanorama(
       document.getElementById('streetview') as HTMLElement,
@@ -71,6 +72,7 @@ export default function MapPanorama({ elements }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // UPDATE PANORAMA
   useEffect(() => {
     if (panoramaInstance.current) {
       if (position) {
@@ -82,14 +84,15 @@ export default function MapPanorama({ elements }: Props) {
     }
   }, [position]);
 
+  // UPDATE MAP
   useEffect(() => {
     if (mapInstance.current && center) {
       mapInstance.current.setCenter(center);
     }
   }, [center, index]);
 
+  // ADD MARKERS
   useEffect(() => {
-    console.log('test');
     if (!mapInstance.current) return;
 
     const infoWindow = new google.maps.InfoWindow({

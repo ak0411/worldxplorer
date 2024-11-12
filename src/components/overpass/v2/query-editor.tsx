@@ -39,7 +39,7 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
   const { overpassState, setOverpassState } = useOverpassState();
 
   useEffect(() => {
-    if (overpassState.query) {
+    if (overpassState.query.trim()) {
       startTransition(() => {
         const formData = new FormData();
         formData.set('query', overpassState.query as string);
@@ -56,8 +56,11 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
 
   const handleFormAction = (formData: FormData) => {
     const query = formData.get('query');
-    setOverpassState({ ...defaultOverpassState, query: query as string });
-    formAction(formData);
+
+    if (query && (query as string).trim()) {
+      setOverpassState({ ...defaultOverpassState, query: query as string });
+      formAction(formData);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
