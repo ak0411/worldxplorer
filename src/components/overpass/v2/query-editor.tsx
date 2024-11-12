@@ -60,6 +60,8 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
     if (query && (query as string).trim()) {
       setOverpassState({ ...defaultOverpassState, query: query as string });
       formAction(formData);
+    } else {
+      setOverpassState(defaultOverpassState);
     }
   };
 
