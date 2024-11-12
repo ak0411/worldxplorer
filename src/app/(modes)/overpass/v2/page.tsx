@@ -20,6 +20,7 @@ export default function Overpass() {
   const { overpassState, setOverpassState } = useOverpassState();
 
   useEffect(() => {
+    console.log(elements);
     if (!elements || elements.length === 0) return;
 
     const overpassStateSchema = z.object({
@@ -55,12 +56,11 @@ export default function Overpass() {
         source as google.maps.StreetViewSource
       );
 
-      setOverpassState((prevState) => ({
-        ...prevState,
+      setOverpassState({
         index,
         source,
         pos: validPos || undefined,
-      }));
+      });
     };
 
     updateUrl();

@@ -16,7 +16,7 @@ export default function MapPanorama({ elements }: Props) {
   const panoramaInstance = useRef<google.maps.StreetViewPanorama>(null);
   const markerClustererInstance = useRef<MarkerClusterer>(null);
 
-  const { overpassState } = useOverpassState();
+  const { overpassState, setOverpassState } = useOverpassState();
   const { pos: position, index } = overpassState;
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -31,10 +31,13 @@ export default function MapPanorama({ elements }: Props) {
   };
 
   const center = useMemo(
-    () => ({
-      lat: elements[index!].lat,
-      lng: elements[index!].lng,
-    }),
+    () =>
+      elements[index]
+        ? {
+            lat: elements[index].lat,
+            lng: elements[index].lng,
+          }
+        : null,
     [elements, index]
   );
 
@@ -64,11 +67,18 @@ export default function MapPanorama({ elements }: Props) {
       }
     );
     mapInstance.current.setStreetView(panoramaInstance.current);
+    // Initialize the panorama and map
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (panoramaInstance.current) {
-      panoramaInstance.current.setPosition(position || null);
+      if (position) {
+        panoramaInstance.current.setPosition(position || null);
+        panoramaInstance.current.setVisible(true);
+      } else {
+        panoramaInstance.current.setVisible(false);
+      }
     }
   }, [position]);
 
@@ -79,6 +89,7 @@ export default function MapPanorama({ elements }: Props) {
   }, [center, index]);
 
   useEffect(() => {
+    console.log('test');
     if (!mapInstance.current) return;
 
     const infoWindow = new google.maps.InfoWindow({
@@ -116,9 +127,7 @@ export default function MapPanorama({ elements }: Props) {
         infoWindow.setContent(content);
         infoWindow.open(mapInstance.current, marker);
 
-        /* const currentParams = new URLSearchParams(window.location.search);
-        currentParams.set('index', i.toString());
-        router.replace(`?${currentParams.toString()}`, { scroll: false }); */
+        setOverpassState({ index: i });
       });
 
       return marker;
@@ -130,6 +139,9 @@ export default function MapPanorama({ elements }: Props) {
       map: mapInstance.current,
       markers,
     });
+
+    // Add markers only when the elements array is updated
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements]);
 
   return (

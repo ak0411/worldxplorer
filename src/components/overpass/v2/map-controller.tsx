@@ -25,7 +25,7 @@ export default function MapController({
       <GoogleButton
         onClick={() =>
           setOverpassState({
-            index: (elements.length + index! - 1) % elements.length,
+            index: (elements.length + index - 1) % elements.length,
           })
         }
       >
@@ -38,7 +38,7 @@ export default function MapController({
       <GoogleButton
         onClick={() =>
           setOverpassState({
-            index: getRandomIndex(index!, elements.length),
+            index: getRandomIndex(index, elements.length),
           })
         }
       >
@@ -47,7 +47,7 @@ export default function MapController({
       <GoogleButton
         onClick={() =>
           setOverpassState({
-            index: (elements.length + index! + 1) % elements.length,
+            index: (elements.length + index + 1) % elements.length,
           })
         }
       >

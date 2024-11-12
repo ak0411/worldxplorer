@@ -1,18 +1,19 @@
 import { useUrlState } from 'state-in-url/next';
 
 type OverpassState = {
-  query?: string;
-  index?: number;
-  source?: google.maps.StreetViewSource;
+  query: string;
+  index: number;
+  source: google.maps.StreetViewSource;
   pos?: {
     lat: number;
     lng: number;
   };
 };
-const defaultOverpassState: OverpassState = {
-  query: undefined,
-  index: undefined,
-  source: undefined,
+
+export const defaultOverpassState: OverpassState = {
+  query: '',
+  index: 0,
+  source: 'default' as google.maps.StreetViewSource,
   pos: undefined,
 };
 

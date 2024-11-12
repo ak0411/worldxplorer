@@ -16,7 +16,10 @@ import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { Resources } from '@/components/overpass/Resources';
 import { Examples } from '@/components/overpass/Examples';
 import { getElements } from '@/app/(modes)/overpass/actions';
-import { useOverpassState } from '@/hooks/use-overpass-state';
+import {
+  defaultOverpassState,
+  useOverpassState,
+} from '@/hooks/use-overpass-state';
 
 type QueryEditorProps = {
   setElements: Dispatch<SetStateAction<Element[] | null>>;
@@ -43,11 +46,19 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
         formAction(formData);
       });
     }
+    // Initialize when visiting the page with query is passed in the URL
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setElements(state.elements);
   }, [setElements, state.elements]);
+
+  const handleFormAction = (formData: FormData) => {
+    const query = formData.get('query');
+    setOverpassState({ ...defaultOverpassState, query: query as string });
+    formAction(formData);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const { value } = e.currentTarget;
@@ -85,7 +96,7 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
           <Examples />
         </div>
       </div>
-      <form action={formAction} className="flex h-full flex-col gap-4">
+      <form action={handleFormAction} className="flex h-full flex-col gap-4">
         <Textarea
           className="flex-grow bg-secondary p-2 text-lg focus-visible:ring-transparent"
           placeholder="Enter your query here..."
@@ -93,7 +104,6 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
           defaultValue={overpassState.query}
           name="query"
           disabled={isPending}
-          onChange={(ev) => setOverpassState({ query: ev.target.value })}
         />
         {state.error && (
           <div className="rounded-md bg-destructive/15 p-3 text-destructive">

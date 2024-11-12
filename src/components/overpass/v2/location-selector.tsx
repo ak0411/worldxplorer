@@ -23,7 +23,7 @@ export function LocationSelector({ elements }: LocationSelectorProps) {
   return (
     <Select
       onValueChange={(value) => setOverpassState({ index: parseInt(value) })}
-      value={index!.toString()}
+      value={index.toString()}
     >
       <SelectTrigger className="w-[100px] border-none bg-[#222]/80 font-semibold text-white focus-visible:ring-transparent">
         <SelectValue>
