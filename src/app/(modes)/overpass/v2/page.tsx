@@ -20,7 +20,10 @@ export default function Overpass() {
   const { overpassState, setOverpassState } = useOverpassState();
 
   useEffect(() => {
-    if (!elements || elements.length === 0) return;
+    if (!elements || elements.length === 0) {
+      setOverpassState({ pos: undefined });
+      return;
+    }
 
     const overpassStateSchema = z.object({
       query: z.string().optional(),

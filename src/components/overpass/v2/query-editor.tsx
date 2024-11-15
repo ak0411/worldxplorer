@@ -1,12 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {
-  Dispatch,
-  SetStateAction,
-  startTransition,
-  useActionState,
-  useEffect,
-} from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -15,53 +10,25 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { Resources } from '@/components/overpass/Resources';
 import { Examples } from '@/components/overpass/Examples';
-import { getElements } from '@/app/(modes)/overpass/actions';
-import {
-  defaultOverpassState,
-  useOverpassState,
-} from '@/hooks/use-overpass-state';
+import { useOverpassState } from '@/hooks/use-overpass-state';
+import { useElements } from '@/hooks/use-elements';
 
 type QueryEditorProps = {
   setElements: Dispatch<SetStateAction<Element[] | null>>;
 };
 
-const initialState = {
-  error: null,
-  elements: null,
-};
-
 export default function QueryEditor({ setElements }: QueryEditorProps) {
-  const [state, formAction, isPending] = useActionState(
-    getElements,
-    initialState
-  );
-
   const { overpassState, setOverpassState } = useOverpassState();
+  const [query, setQuery] = useState(overpassState.query);
+  const { fetchElements, handleCancel, isPending } = useElements();
 
-  useEffect(() => {
-    if (overpassState.query.trim()) {
-      startTransition(() => {
-        const formData = new FormData();
-        formData.set('query', overpassState.query as string);
-        formAction(formData);
-      });
-    }
-    // Initialize when visiting the page with query is passed in the URL
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    setElements(state.elements);
-  }, [setElements, state.elements]);
-
-  const handleFormAction = (formData: FormData) => {
-    const query = formData.get('query');
-
-    if (query && (query as string).trim()) {
-      setOverpassState({ ...defaultOverpassState, query: query as string });
-      formAction(formData);
+  const handleClick = async () => {
+    setOverpassState({ query });
+    if (query.trim()) {
+      const elements = await fetchElements(query);
+      setElements(elements);
     } else {
-      setOverpassState(defaultOverpassState);
+      setElements(null);
     }
   };
 
@@ -101,21 +68,21 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
           <Examples />
         </div>
       </div>
-      <form action={handleFormAction} className="flex h-full flex-col gap-4">
-        <Textarea
-          className="flex-grow bg-secondary p-2 text-lg focus-visible:ring-transparent"
-          placeholder="Enter your query here..."
-          onKeyDown={handleKeyDown}
-          defaultValue={overpassState.query}
-          name="query"
+      <Textarea
+        className="flex-grow bg-secondary p-2 text-lg focus-visible:ring-transparent"
+        placeholder="Enter your query here..."
+        onKeyDown={handleKeyDown}
+        defaultValue={query}
+        onChange={(e) => setQuery(e.target.value)}
+        disabled={isPending}
+      />
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
           disabled={isPending}
-        />
-        {state.error && (
-          <div className="rounded-md bg-destructive/15 p-3 text-destructive">
-            {state.error}
-          </div>
-        )}
-        <Button type="submit" variant="outline" disabled={isPending}>
+          onClick={handleClick}
+          className="flex-grow"
+        >
           {isPending ? (
             <>
               <Loader2 className="mr-2 size-4 animate-spin" />
@@ -125,7 +92,12 @@ export default function QueryEditor({ setElements }: QueryEditorProps) {
             'Run Query'
           )}
         </Button>
-      </form>
+        {isPending && (
+          <Button variant="destructive" onClick={handleCancel}>
+            Cancel
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
