@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -10,26 +9,50 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { Resources } from '@/components/overpass/Resources';
 import { Examples } from '@/components/overpass/Examples';
-import { useOverpassState } from '@/hooks/use-overpass-state';
+import {
+  defaultOverpassState,
+  useOverpassState,
+} from '@/hooks/use-overpass-state';
 import { useElements } from '@/hooks/use-elements';
 
 type QueryEditorProps = {
   setElements: Dispatch<SetStateAction<Element[] | null>>;
+  collapseQueryEditorPanel: () => void;
 };
 
-export default function QueryEditor({ setElements }: QueryEditorProps) {
+export default function QueryEditor({
+  setElements,
+  collapseQueryEditorPanel,
+}: QueryEditorProps) {
   const { overpassState, setOverpassState } = useOverpassState();
   const [query, setQuery] = useState(overpassState.query);
   const { fetchElements, handleCancel, isPending } = useElements();
 
-  const handleClick = async () => {
-    setOverpassState({ query });
+  const fetchData = async () => {
     if (query.trim()) {
       const elements = await fetchElements(query);
+      if (elements && elements.length > 0) {
+        collapseQueryEditorPanel();
+        setOverpassState({ index: overpassState.index || 0 });
+      } else {
+        setOverpassState(defaultOverpassState);
+      }
       setElements(elements);
     } else {
       setElements(null);
+      setOverpassState(defaultOverpassState);
     }
+  };
+
+  useEffect(() => {
+    fetchData();
+    // Auto fetch if query is present in the URL
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleClick = async () => {
+    setOverpassState({ query });
+    fetchData();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

@@ -19,11 +19,11 @@ export default function Overpass() {
   const queryEditorPanelRef = useRef<ImperativePanelHandle>(null);
   const { overpassState, setOverpassState } = useOverpassState();
 
+  const collapseQueryEditorPanel = () =>
+    queryEditorPanelRef.current?.collapse();
+
   useEffect(() => {
-    if (!elements || elements.length === 0) {
-      setOverpassState({ pos: undefined });
-      return;
-    }
+    if (!elements || elements.length === 0) return;
 
     const overpassStateSchema = z.object({
       query: z.string().optional(),
@@ -77,7 +77,10 @@ export default function Overpass() {
           defaultSize={30}
           ref={queryEditorPanelRef}
         >
-          <QueryEditor setElements={setElements} />
+          <QueryEditor
+            setElements={setElements}
+            collapseQueryEditorPanel={collapseQueryEditorPanel}
+          />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel minSize={20} defaultSize={70}>

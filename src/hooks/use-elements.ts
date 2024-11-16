@@ -45,10 +45,12 @@ export const useElements = () => {
 
       return elements;
     } catch (err) {
-      if (err instanceof Error && err.name !== 'AbortError') {
-        toast({
-          description: err.message,
-        });
+      if (err instanceof Error) {
+        if (err.name !== 'AbortError') {
+          toast({
+            description: err.message,
+          });
+        }
       } else {
         toast({
           description: 'An unexpected error occurred',
